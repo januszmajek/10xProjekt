@@ -5,13 +5,13 @@
       "source": "przeprogramowani/10x-cli",
       "sourceType": "github",
       "skillPath": "skills/10x-cli-guide/SKILL.md",
-      "computedHash": "3238013c16ec98c0af694856d4c0e60ebdd97bb7c243af0e7f49cbc8c2abbc99"
+      "computedHash": "2267878614fee96d6465839c35d0ce25ce9da34b6011ad6071710d161aee9fd7"
     },
     "10x-cli-setup": {
       "source": "przeprogramowani/10x-cli",
       "sourceType": "github",
       "skillPath": "skills/10x-cli-setup/SKILL.md",
-      "computedHash": "4249d2c3bfd9031c4a08e73962a95c2e73ddc53d0a3c3799db9a7be26477e083"
+      "computedHash": "9be34e764107634d0da1ae046f5a121391e72d503abd060601d75254dfa5afaf"
     }
   }
 }
