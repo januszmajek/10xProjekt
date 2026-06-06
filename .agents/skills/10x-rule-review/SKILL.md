@@ -2,14 +2,10 @@
 name: 10x-rule-review
 description: >
   Review the condition of an "AI rules" file (CLAUDE.md, AGENTS.md,
-  .cursor/rules/*.mdc, .github/copilot-instructions.md, .windsurfrules,
-  nested per-area rule files, or any other rule-for-AI markdown) and produce
-  a 5-point scorecard with concrete, actionable fixes. Use when the user
-  invokes /10x-rule-review with a path to a rules file, or asks to "review
-  AI rules", "audit AGENTS.md", "check my CLAUDE.md", "score my agent
-  instructions", "is this rules file healthy", or similar. The skill is
-  agnostic to which tool the rules file targets — it scores the file as a
-  rule-for-AI artifact, not as a project document.
+  .cursor/rules/*.mdc, copilot-instructions.md, .windsurfrules, or similar)
+  and produce a 5-point scorecard with concrete fixes, regardless of which
+  tool the rules target. Use when the user asks to "review AI rules",
+  "audit AGENTS.md", "check my CLAUDE.md", "score my agent instructions".
 ---
 
 # 10x Rule Review
@@ -44,9 +40,9 @@ If the file does not exist, stop and report the path. Do not invent content.
 
 ## Procedure
 
-1. Read the file in full (use a file reading tool once; if it's > 2000 lines, read in chunks until complete).
+1. Read the file in full (use a file read operation once; if it's > 2000 lines, read in chunks until complete).
 2. Compute Checks 1–4.
-3. Run Check 5 in its own multi-step flow (5a list → 5b comment → 5c propose → 5d ask via a user interaction tool → 5e atomic-change reminder). The reorder edit, if any, happens here and only with explicit user approval.
+3. Run Check 5 in its own multi-step flow (5a list → 5b comment → 5c propose → 5d ask via a user question → 5e atomic-change reminder). The reorder edit, if any, happens here and only with explicit user approval.
 4. Print the scorecard in the exact format under "Output format". Include the reorder-proposal summary and the user's decision in the Check 5 findings.
 5. Stop. Do not propose further follow-up actions unless the user asks.
 

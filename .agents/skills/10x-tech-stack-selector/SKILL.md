@@ -2,14 +2,11 @@
 name: 10x-tech-stack-selector
 description: >
   Pick a starter and a stack for a greenfield project after the PRD is written.
-  Reads context/foundation/prd.md, opens with a Q0 path-fork (recommended
-  default for the (product_type, language_family) cell vs design-your-own),
-  runs the residual interview on the custom path, reasons over a language-aware
-  starter registry with four agent-friendly quality gates, and writes a
-  context/foundation/tech-stack.md hand-off /10x-bootstrapper consumes. Use when
-  the user asks "what stack should I use", says "pick a stack", "choose
-  framework", "co wybrać do projektu", or has a PRD on disk and is ready to
-  scaffold. Use AFTER /10x-prd, BEFORE /10x-bootstrapper.
+  Reads context/foundation/prd.md, reasons over a language-aware starter
+  registry with four agent-friendly quality gates, and writes the
+  context/foundation/tech-stack.md hand-off. Use when the user asks "what
+  stack should I use", "pick a stack", "choose framework",
+  "co wybrać do projektu". Use AFTER /10x-prd, BEFORE /10x-bootstrapper.
 ---
 
 # Tech Stack Selector: From PRD to Starter
@@ -107,17 +104,13 @@ PRD priors:
     - ...
 ```
 
-Ask the user:
-- question: "Are these priors correct, or do you want to correct anything before we proceed?"
-  header: "Priors"
-  options:
-  - label: "Correct — proceed (Recommended)"
-    description: "Continue with these priors."
-  - label: "Correct a value"
-    description: "I'll ask which field to correct, then update an in-memory override (the PRD on disk is unchanged)."
-  - label: "Stop — fix the PRD first"
-    description: "Exit. Re-run /10x-prd to fix priors, then re-invoke /10x-tech-stack-selector."
-  multiSelect: false
+Ask one confirmation:
+
+Ask the user: "Are these priors correct, or do you want to correct anything before we proceed?"
+Options:
+- "Correct — proceed (Recommended)": Continue with these priors.
+- "Correct a value": The AI assistant will ask which field to correct, then update an in-memory override (the PRD on disk is unchanged).
+- "Stop — fix the PRD first": Exit. Re-run /10x-prd to fix priors, then re-invoke /10x-tech-stack-selector.
 
 If "Correct a value": ask which field, capture an override, proceed with the override applied for this session only.
 
@@ -181,17 +174,13 @@ test -f context/foundation/tech-stack.md
 
 If the file does not exist, write `context/foundation/tech-stack.md` with the validated content.
 
-If the file exists, ask the user:
-- question: "context/foundation/tech-stack.md already exists. How would you like to proceed?"
-  header: "Collision"
-  options:
-  - label: "Overwrite (Recommended)"
-    description: "Replace the existing tech-stack.md with the new selection. The prior version is lost unless committed."
-  - label: "Save as tech-stack-v2.md"
-    description: "Preserve history. New selection lands at the next available tech-stack-vN.md slot."
-  - label: "Abort"
-    description: "Exit without writing. The conversation rationale is preserved in chat only."
-  multiSelect: false
+If the file exists, ask:
+
+Ask the user: "context/foundation/tech-stack.md already exists. How would you like to proceed?"
+Options:
+- "Overwrite (Recommended)": Replace the existing tech-stack.md with the new selection. The prior version is lost unless committed.
+- "Save as tech-stack-v2.md": Preserve history. New selection lands at the next available tech-stack-vN.md slot.
+- "Abort": Exit without writing. The conversation rationale is preserved in chat only.
 
 The recommended default here is "Overwrite" because tech-stack-selector is a one-shot decision per project; multiple versions are usually a sign the user is reconsidering, in which case losing the prior pick is intentional. Versioned save is the escape hatch.
 

@@ -1,18 +1,12 @@
 ---
 name: 10x-infra-research
 description: >
-  Research and recommend an MVP deployment platform by combining tech-stack
-  context, a short developer interview, and parallel web research scored against
-  five agent-friendly platform criteria. Cross-checks the top recommendation
-  through three anti-bias lenses (devil's advocate, pre-mortem, unknown unknowns)
-  before writing context/foundation/infrastructure.md with a scored platform
-  comparison, rationale, and risk register. Use when the user needs to pick a
-  hosting / deployment / maintenance platform for an MVP and wants a
-  well-researched, bias-checked decision rather than a gut call.
-  Trigger phrases: "choose a platform", "where should I deploy", "infra research",
-  "deployment platform for my MVP", "wybierz platformę", "gdzie deployować",
-  "infrastructure decision", "hosting choice", "jaka platforma do deploymentu".
-  Use AFTER /10x-prd or /10x-tech-stack-selector, BEFORE /10x-implement.
+  Research and recommend an MVP deployment platform via a short interview plus
+  parallel, bias-checked web research; writes context/foundation/infrastructure.md
+  with a scored comparison and risk register. Trigger phrases: "choose a platform",
+  "where should I deploy", "infra research", "wybierz platformę",
+  "gdzie deployować", "jaka platforma do deploymentu". Use AFTER /10x-prd or
+  /10x-tech-stack-selector, BEFORE /10x-implement.
 ---
 
 # Platform Research: Conscious Deployment Platform for MVP
@@ -79,49 +73,49 @@ Context loaded:
 
 ### Step 1 — Developer interview (5 questions)
 
-Ask the user five Yes / No / Don't know questions. Ask the user for each, one at a time. Collect all answers before proceeding to research.
+Ask the user five Yes / No / Don't know questions. Ask each question one at a time. Collect all answers before proceeding to research.
 
 **Question 1**
 
 Ask the user: "Does your app require persistent server-side connections — WebSockets, long-polling, or background worker processes that must stay alive between requests?"
   Options:
-  - Yes: The app needs always-on processes or long-lived connections.
-  - No: Request/response only — each request is stateless.
-  - Don't know: I'm not sure yet.
+  - "Yes" (The app needs always-on processes or long-lived connections.)
+  - "No" (Request/response only — each request is stateless.)
+  - "Don't know" (I'm not sure yet.)
 
 **Question 2**
 
 Ask the user: "Is minimizing monthly cost the top priority at MVP stage, or is developer experience and speed of iteration more important?"
   Options:
-  - Minimize cost: I want the cheapest viable option, even if DX is rougher.
-  - Prioritize DX: I'll pay a reasonable amount for a smoother development loop.
-  - Don't know / roughly equal: No strong preference.
+  - "Minimize cost" (I want the cheapest viable option, even if DX is rougher.)
+  - "Prioritize DX" (I'll pay a reasonable amount for a smoother development loop.)
+  - "Don't know / roughly equal" (No strong preference.)
 
 **Question 3**
 
 Ask the user: "Do you or your team already have hands-on experience with any specific platform you'd feel comfortable deploying to?"
   Options:
-  - Yes — Vercel / Netlify: Comfortable with JAMstack-style platforms.
-  - Yes — Cloudflare (Workers / Pages): Comfortable with edge-first deployment.
-  - Yes — Railway / Render / Fly.io: Comfortable with container-based PaaS.
-  - Yes — AWS / GCP / Azure: Comfortable with hyperscaler infrastructure.
-  - No strong familiarity: Open to whatever fits best.
+  - "Yes — Vercel / Netlify" (Comfortable with JAMstack-style platforms.)
+  - "Yes — Cloudflare (Workers / Pages)" (Comfortable with edge-first deployment.)
+  - "Yes — Railway / Render / Fly.io" (Comfortable with container-based PaaS.)
+  - "Yes — AWS / GCP / Azure" (Comfortable with hyperscaler infrastructure.)
+  - "No strong familiarity" (Open to whatever fits best.)
 
 **Question 4**
 
 Ask the user: "Do you expect the app to serve users globally (edge/CDN matters) or mainly from one region?"
   Options:
-  - Global — latency across regions matters: Users will be on different continents.
-  - Single region is fine: All users are in one country / region.
-  - Don't know yet: Not sure about target geography.
+  - "Global — latency across regions matters" (Users will be on different continents.)
+  - "Single region is fine" (All users are in one country / region.)
+  - "Don't know yet" (Not sure about target geography.)
 
 **Question 5**
 
 Ask the user: "Will the deployment need co-located managed services — database, object storage, queues — from the same platform, or are external providers fine?"
   Options:
-  - Co-location preferred: I want DB, storage, etc. from the same vendor to keep it simple.
-  - External providers are fine: I'll use separate services (e.g., Supabase, Upstash, Cloudflare R2).
-  - Don't know yet: Haven't decided on data layer yet.
+  - "Co-location preferred" (I want DB, storage, etc. from the same vendor to keep it simple.)
+  - "External providers are fine" (I'll use separate services (e.g., Supabase, Upstash, Cloudflare R2).)
+  - "Don't know yet" (Haven't decided on data layer yet.)
 
 Store all five answers as research constraints before moving to Step 2.
 
@@ -152,7 +146,7 @@ Focus on:
 4. Free tier and estimated cost at 10k-100k monthly requests
 5. Persistent process / WebSocket support (yes / no / limited)
 6. Co-located managed services (database, storage, queues)
-7. MCP server or your AI coding assistant integration (if any)
+7. MCP server or AI assistant integration (if any)
 8. Known limitations or gotchas for <framework from tech stack>
 9. Current status of every feature mentioned above: GA / beta / preview / deprecated / region-limited.
    For any non-GA feature, capture the explicit caveat and the date the status was checked.
@@ -229,27 +223,23 @@ After all three cross-checks, present the findings to the user and ask:
 
 Ask the user: "The anti-bias cross-check surfaced some risks for <Platform A>. How would you like to proceed?"
   Options:
-  - Proceed with <Platform A> — risks noted: The risks are manageable. Include them in the output's risk register.
-  - Swap to <Platform B> instead: The risks are significant enough to prefer the second option.
-  - Swap to <Platform C> instead: The risks are significant enough to prefer the third option.
+  - "Proceed with <Platform A> — risks noted" (The risks are manageable. Include them in the output's risk register.)
+  - "Swap to <Platform B> instead" (The risks are significant enough to prefer the second option.)
+  - "Swap to <Platform C> instead" (The risks are significant enough to prefer the third option.)
 
 Apply the user's choice. If they swap to B or C, run the three cross-checks again for the new top pick and present results (no need to ask again — record it and proceed).
 
 ### Step 5 — Write output
 
-Check for collision:
-
-```bash
-test -f context/foundation/infrastructure.md
-```
+Check for collision by attempting to read `context/foundation/infrastructure.md`.
 
 If the file exists, ask:
 
 Ask the user: "context/foundation/infrastructure.md already exists. How would you like to proceed?"
   Options:
-  - Overwrite (Recommended): Replace the existing file. The prior version is lost unless committed.
-  - Save as infrastructure-v2.md: Preserve history. New file lands at the next available version slot.
-  - Abort: Exit without writing. The recommendation is preserved in chat only.
+  - "Overwrite (Recommended)" (Replace the existing file. The prior version is lost unless committed.)
+  - "Save as infrastructure-v2.md" (Preserve history. New file lands at the next available version slot.)
+  - "Abort" (Exit without writing. The recommendation is preserved in chat only.)
 
 Build the output file:
 
@@ -334,9 +324,9 @@ The following were not evaluated in this research:
 - Production-scale architecture (multi-region, HA, DR)
 ```
 
-Write to `context/foundation/infrastructure.md` (or the versioned path if chosen). Create `context/foundation/` if it doesn't exist.
+Write the content to `context/foundation/infrastructure.md` (or the versioned path if chosen). Create `context/foundation/` if it doesn't exist.
 
-After the write, copy the next-step hint to clipboard:
+After the write, copy the next-step hint to clipboard using appropriate shell commands for the user's operating system:
 
 ```bash
 echo -n "/10x-implement" | pbcopy 2>/dev/null || echo -n "/10x-implement" | clip.exe 2>/dev/null || echo -n "/10x-implement" | xclip -selection clipboard 2>/dev/null || true
@@ -375,7 +365,7 @@ Single file written: `context/foundation/infrastructure.md` (or `infrastructure-
 
 ## Critical guardrails
 
-1. **Research before recommending.** Never recommend a platform based solely on training-data familiarity. Always run the parallel web research (Step 2) with web search / web fetching tools before scoring. Stale impressions about pricing or feature support lead to wrong recommendations.
+1. **Research before recommending.** Never recommend a platform based solely on training-data familiarity. Always run the parallel web research (Step 2) using web search/fetch tools before scoring. Stale impressions about pricing or feature support lead to wrong recommendations.
 
 2. **Tech stack is a hard constraint, not a preference.** If the tech stack requires a runtime that a platform doesn't support (e.g., Python on a JS-only edge runtime), that platform is dropped — no amount of scoring overrides it.
 
