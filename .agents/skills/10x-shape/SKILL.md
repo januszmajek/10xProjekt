@@ -42,17 +42,20 @@ When this skill is invoked:
 3. **If nothing was provided**, respond with:
 
 ```
+
 I'll help you shape an idea into structured notes that /10x-prd can turn into
 a real PRD — whether you're starting from scratch (greenfield) or shaping a
 change to an existing system (brownfield).
 
 Please share:
+
 1. The seed idea — what do you want to build or change, in your own words?
 2. (Optional) Any rough notes, sketches, or links I should read
 
 Tip: pass the idea inline — `/10x-shape a recipe app that uses fridge contents`
-     or for brownfield — `/10x-shape add a recommendation engine to my recipe app`
-```
+or for brownfield — `/10x-shape add a recommendation engine to my recipe app`
+
+````
 
 Then wait.
 
@@ -64,12 +67,13 @@ Check the 10xWorkflow scaffold by testing two paths:
 
 ```bash
 test -d context/foundation
-```
+````
 
 If it exists, proceed to Step 0.5.
 
 If missing, the project has not been initialized for 10xWorkflow. Ask the user:
 "This directory isn't initialized for 10xWorkflow (context/foundation/ is missing). Run /10x-init now?" with options:
+
 - "Yes — run /10x-init (Recommended)" (description: "Scaffolds the /context skeleton (changes/, archive/, foundation/) with READMEs, then continues shaping.")
 - "No — stop here" (description: "Exit without changes. You'll need to initialize before shape can run.")
 
@@ -103,6 +107,7 @@ Found a prior shape session at context/foundation/shape-notes.md:
 
 Then ask the user:
 "How would you like to proceed?" with options:
+
 - "Resume from Phase [next] (Recommended)" (description: "Pick up where the prior session left off. Completed phases are summarized, not replayed.")
 - "Restart from scratch" (description: "Archive the existing shape-notes.md to context/foundation/archive/ and start a new session.")
 - "Cancel" (description: "Exit without changes.")
@@ -160,6 +165,7 @@ Get-ChildItem -Path . -Filter 'vite.config.*' -File -ErrorAction SilentlyContinu
 ```
 
 Scoring:
+
 - **Tier 1 hit** (git history exists) → strong brownfield signal
 - **Tier 2 hit** (lockfile exists) → strong brownfield signal
 - **Tier 1 + Tier 2** → high-confidence brownfield
@@ -167,6 +173,7 @@ Scoring:
 - **No signals** → greenfield
 
 Decision logic:
+
 - **Any Tier 1 or Tier 2 hit** → propose `context_type: brownfield`
 - **Tier 3 only** → propose brownfield but flag the ambiguity: "I found a manifest file but no lockfile or git history — this might be a freshly initialized project rather than a real brownfield."
 - **No signals** → propose `context_type: greenfield`
@@ -174,6 +181,7 @@ Decision logic:
 Print what was detected:
 
 - **High-confidence brownfield** (T1 or T2):
+
   ```
   This looks like an existing project:
     [list detected signals, e.g. "git history (47 commits)", "package-lock.json", "src/ directory"]
@@ -182,6 +190,7 @@ Print what was detected:
   ```
 
 - **Ambiguous** (T3 only):
+
   ```
   I found [manifest file] but no lockfile or git history — this could be a
   freshly initialized project or a real brownfield. I'll propose brownfield
@@ -196,6 +205,7 @@ Print what was detected:
 
 Then confirm with the user:
 "Detected context: [greenfield|brownfield]. Is this correct?" with options:
+
 - "[Greenfield|Brownfield] — correct (Recommended)" (description: "[Auto-detected mode description]")
 - "[Other mode] — override" (description: "Switch to [other mode] instead.")
 
@@ -391,7 +401,7 @@ This phase produces the `## Functional Requirements` and `## User Stories` secti
 
 #### Greenfield mode
 
-Open with: "Now let's get concrete. From the MVP flow you sketched, what does the actor have to be *able* to do? List the capabilities — I'll format them as FRs."
+Open with: "Now let's get concrete. From the MVP flow you sketched, what does the actor have to be _able_ to do? List the capabilities — I'll format them as FRs."
 
 Capture each capability as a single FR line per the schema format:
 
@@ -560,7 +570,7 @@ After framing, add: "What constraints does the existing system impose on this ch
 
 #### Both modes
 
-After product framing is locked, run **one** Non-Goals multi-select round. The shape is a multi-select avoid-list — but aimed at *scope* avoids (capabilities the MVP won't build / change won't touch, quality dimensions it won't aim for), not technology avoids. Ask:
+After product framing is locked, run **one** Non-Goals multi-select round. The shape is a multi-select avoid-list — but aimed at _scope_ avoids (capabilities the MVP won't build / change won't touch, quality dimensions it won't aim for), not technology avoids. Ask:
 
 ```
 What is this [MVP/change] explicitly NOT doing? Pick anything that should be
@@ -595,7 +605,7 @@ Read back the current `shape-notes.md` and check each of the following elements.
 3. **Project artifacts** — `shape-notes.md` itself exists with a valid frontmatter checkpoint. (This is always present at this point.)
 4. **Timeline-cost acknowledged** — either `timeline_budget.mvp_weeks` / `delivery_weeks` ≤ 3, OR a `## Timeline acknowledgment` block exists in shape-notes recording that the user accepted the sustained-effort cost in Step 3. Longer timelines are valid; the gate is that the cost was surfaced and accepted, not that the timeline is short.
 5. **Non-Goals** — `## Non-Goals` block exists with at least one entry.
-6. **Preserved behavior** *(brownfield only)* — `## Constraints & Preserved Behavior` block exists and explicitly names what must not break. Skip this check for greenfield sessions.
+6. **Preserved behavior** _(brownfield only)_ — `## Constraints & Preserved Behavior` block exists and explicitly names what must not break. Skip this check for greenfield sessions.
 
 Do NOT check for `## Testing Strategy`, `## Deployment & CI/CD`, or `## Implementation Decisions` — those are not part of the PRD schema. They sit downstream of stack selection / stack assessment, not in PRD.
 
@@ -620,6 +630,7 @@ For each `missing/weak`, **list it by name** with a one-line consequence: "Busin
 
 Then ask the user:
 "How would you like to proceed?" with options:
+
 - "Address gaps now" (description: "Re-enter the relevant phase to fill in missing elements. Recommended if multiple elements are missing.")
 - "Accept and finish" (description: "Proceed despite the gaps. They will be recorded as warnings in the checkpoint and surfaced in /10x-prd's Open Questions.")
 - "Restart phase [N]" (description: "Go back to a specific phase and rebuild from there.")
@@ -700,4 +711,7 @@ STOP. Do not chain into `/10x-prd` automatically — the user runs it when ready
 - The schema reference (`references/prd-schema.md`) is the single source of truth. Any field name, section name, or checkpoint key referenced in this body MUST exist in the schema doc — if it doesn't, fix the schema doc first.
 - For greenfield, the 10 PRD sections are anticipated in `shape-notes.md` body order so `/10x-prd` can map cleanly. For brownfield, the 11 brownfield PRD sections are anticipated instead (see `references/prd-schema.md`). The names match exactly. Forward-looking content (tech-stack-selector / stack-assess residuals; future technical-roadmap concerns) lives in separate `## Forward to ...` blocks in shape-notes' body and does NOT map into PRD.
 - If the user pushes to skip a phase ("just generate the PRD already"), explain the consequence: missing phases produce hollow PRD sections. Then offer to skip with the cost made explicit. The choice is theirs.
+
+```
+
 ```

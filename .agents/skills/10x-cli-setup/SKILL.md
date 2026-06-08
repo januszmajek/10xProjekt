@@ -5,7 +5,7 @@ description: "ALWAYS invoke this skill when the user mentions 10x-cli, @przeprog
 
 # 10x-cli Setup
 
-This skill sets up the `@przeprogramowani/10x-cli` on the user's machine. The core principle is simple: **the README is the single source of truth**. The CLI evolves — version requirements change, new install methods appear, commands get updated. Rather than hardcoding any of that here, this skill tells you *how to work*, and the README tells you *what to do*.
+This skill sets up the `@przeprogramowani/10x-cli` on the user's machine. The core principle is simple: **the README is the single source of truth**. The CLI evolves — version requirements change, new install methods appear, commands get updated. Rather than hardcoding any of that here, this skill tells you _how to work_, and the README tells you _what to do_.
 
 ## Step 1: Check if the CLI is already installed
 
@@ -35,6 +35,7 @@ Use WebFetch or `curl -sL` to get it. If the fetch fails, tell the user and stop
 Read the fetched README and construct a step-by-step setup plan from it. The README contains everything needed: prerequisites, install commands, auth flow, available commands, and tool-specific configuration. Your job is to translate the README into actionable steps for the user's specific situation.
 
 The general flow from the README is:
+
 1. **Prerequisites** — whatever the README says is required (runtime version, package manager, etc.). Check each one and stop if something is missing.
 2. **Install** — use the install method described in the README. Verify it worked.
 3. **Authenticate** — the README describes the auth command and flow. Note: auth is interactive (magic-link email), so the user may need to run it themselves via `! 10x auth` if the shell doesn't support input.

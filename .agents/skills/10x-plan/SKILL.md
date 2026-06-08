@@ -53,22 +53,24 @@ Before any reading, identify what kinds of upstream artifacts the user passed in
 
 **Question count and focus scale with what's provided:**
 
-| Upstream artifacts          | LOW   | MEDIUM | HIGH  | What changes vs. baseline                                                                                                              |
-| --------------------------- | ----- | ------ | ----- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| Task only (baseline)        | 4–6   | 7–10   | 11–15 | Full questioning across all relevant categories.                                                                                       |
-| Task + research             | 3–5   | 5–7    | 8–11  | Skip questions whose answer is already in the research doc. Don't re-spawn sub-agents to find what research already mapped.            |
-| Task + frame                | 2–3   | 4–6    | 7–9   | Skip [D]iagnostic categories — frame settled problem framing. Treat the Reframed (or Confirmed) Problem Statement as authoritative.    |
-| Task + frame + research     | 1–2   | 3–5    | 5–7   | Skip both. Ask only [S]olution-design questions that genuinely need user input.                                                        |
+| Upstream artifacts      | LOW | MEDIUM | HIGH  | What changes vs. baseline                                                                                                           |
+| ----------------------- | --- | ------ | ----- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Task only (baseline)    | 4–6 | 7–10   | 11–15 | Full questioning across all relevant categories.                                                                                    |
+| Task + research         | 3–5 | 5–7    | 8–11  | Skip questions whose answer is already in the research doc. Don't re-spawn sub-agents to find what research already mapped.         |
+| Task + frame            | 2–3 | 4–6    | 7–9   | Skip [D]iagnostic categories — frame settled problem framing. Treat the Reframed (or Confirmed) Problem Statement as authoritative. |
+| Task + frame + research | 1–2 | 3–5    | 5–7   | Skip both. Ask only [S]olution-design questions that genuinely need user input.                                                     |
 
 **Principle**: every artifact passed in is a source of decisions already made. Reading them counts as listening to the user. Don't ask the user what they already wrote down.
 
 **When a frame is present**, read it FULLY and treat as authoritative:
+
 - Copy the **Reported Observation** + **Reframed (or Confirmed) Problem Statement** as the task definition. Do not re-question the framing.
 - Lift the **Hypothesis Investigation** table and **Narrowing Signals** into your "Current State Analysis" — this work is already done.
 - If the frame **Confidence: LOW** is flagged, surface that in the plan's "Open Risks & Assumptions" and ask ONE clarifying question about how to proceed (verify first, or plan with risk acknowledged).
 - Do NOT re-investigate the framing. Frame owns problem framing; you own solution design.
 
 **When research is present**, read it FULLY and use as the codebase baseline:
+
 - "Code References" section IS your codebase grounding — don't re-spawn Explore agents to find the same files.
 - "Architecture Insights" feed directly into "Current State Analysis."
 - Spawn sub-agents only to fill specific gaps research didn't cover (e.g., the exact files this plan will modify if research was broader).
@@ -261,7 +263,7 @@ Before any reading, identify what kinds of upstream artifacts the user passed in
    - Questions with obvious answers given the context already provided
    - Preferences that don't affect the plan's structure or success
 
-   **CRITICAL**: You MUST ask the number of questions appropriate to the confirmed complexity level *and* the upstream-artifacts scaling from Step 1.0. Do not shortcut this when no upstream artifacts were provided — thorough questioning prevents costly rework. Equally, do not pad questions when a frame or research already covers the ground — re-asking erodes trust in the upstream artifact. Each question should force a real decision, not confirm something obvious.
+   **CRITICAL**: You MUST ask the number of questions appropriate to the confirmed complexity level _and_ the upstream-artifacts scaling from Step 1.0. Do not shortcut this when no upstream artifacts were provided — thorough questioning prevents costly rework. Equally, do not pad questions when a frame or research already covers the ground — re-asking erodes trust in the upstream artifact. Each question should force a real decision, not confirm something obvious.
 
 ### Step 2: Research & Discovery
 
@@ -381,7 +383,7 @@ After structure approval:
    - Update `change.md`: set `status: planned` and `updated: <today>`.
 2. **Use this template structure** (Phase blocks contain plain bullets — `- ` not `- [ ]` — and a single canonical `## Progress` section at the bottom owns the checkbox state, see `references/progress-format.md` for the contract):
 
-````markdown
+```markdown
 # [Feature/Task Name] Implementation Plan
 
 ## Overview
@@ -519,7 +521,7 @@ A code snippet appears here ONLY when the change is non-obvious — a tricky reg
 #### Automated
 
 - [ ] 2.1 <…>
-````
+```
 
 The Progress section is mechanical — emit one `### Phase N: <name>` per phase, with `#### Automated` / `#### Manual` subsections enumerating every Success Criteria bullet from that phase as `- [ ] <phase>.<index> <title>`. Omit empty subsections. The Phase blocks themselves carry plain `- ` bullets (no checkboxes); the `## Progress` section is the only place `[ ]` / `[x]` appear.
 
@@ -554,11 +556,11 @@ After writing the full plan, generate a concise brief that gives the reader the 
 
 When a frame brief or research doc was the input, mark the **Source** column to show where the decision came from. This lets readers see the lineage: what was settled upstream vs decided in this planning session.
 
-| Decision                       | Choice            | Why (1 sentence)  | Source           |
-| ------------------------------ | ----------------- | ----------------- | ---------------- |
-| [Decision area]                | [What was chosen] | [Core rationale]  | Frame / Research / Plan |
-| [Decision area]                | [Choice]          | [Rationale]       | Frame / Research / Plan |
-| ...                            | ...               | ...               | ...              |
+| Decision        | Choice            | Why (1 sentence) | Source                  |
+| --------------- | ----------------- | ---------------- | ----------------------- |
+| [Decision area] | [What was chosen] | [Core rationale] | Frame / Research / Plan |
+| [Decision area] | [Choice]          | [Rationale]      | Frame / Research / Plan |
+| ...             | ...               | ...              | ...                     |
 
 (Omit the `Source` column if no upstream artifacts were provided — every row would be `Plan`.)
 
@@ -744,6 +746,7 @@ Planning can be context-heavy due to research + iteration. Keep context efficien
 Mixed: `Loading UX` is `[S]` (UI behavior — solution detail); `Scale` is `[D]` (problem boundary — how big is the dataset). With a frame brief, ask only `Loading UX`; the scale should already be in the Reframed (or Confirmed) Problem Statement.
 
 Ask the user: "What should the user see while new items load?"
+
 - header: "Loading UX"
 - options:
   - label: "Inline spinner"
@@ -753,7 +756,7 @@ Ask the user: "What should the user see while new items load?"
   - label: "Full-page spinner"
     description: "Replace content with spinner. · Strength: Simplest to implement — one component, no layout concerns. · Tradeoff: Blocks all interaction; feels broken on slow connections."
     multiSelect: false
-Ask the user: "How many items should this handle gracefully?"
+    Ask the user: "How many items should this handle gracefully?"
 - header: "Scale"
 - options:
   - label: "⭐ Recommended: Hundreds"
@@ -769,6 +772,7 @@ Ask the user: "How many items should this handle gracefully?"
 Mixed: `Outcome` is `[D]` (defines what success looks like — pure problem framing); `Levels` is `[S]` (audience-handling strategy — how to structure delivery). With a frame brief, ask only `Levels`; the outcome should be settled.
 
 Ask the user: "What should the learner be able to DO after this module — not just know?"
+
 - header: "Outcome"
 - options:
   - label: "⭐ Recommended: Build a working prototype"
@@ -778,7 +782,7 @@ Ask the user: "What should the learner be able to DO after this module — not j
   - label: "Pass a knowledge check"
     description: "Quiz or code review proving conceptual understanding. · Strength: Fast to create, easy to grade at scale. · Tradeoff: Tests recognition not production — learner may understand but not be able to execute."
     multiSelect: false
-Ask the user: "How should this module handle different skill levels in the audience?"
+    Ask the user: "How should this module handle different skill levels in the audience?"
 - header: "Levels"
 - options:
   - label: "Single track, advanced"
@@ -794,6 +798,7 @@ Ask the user: "How should this module handle different skill levels in the audie
 `Bottleneck` is `[D]` — pure problem framing (which problem to solve). This is exactly the kind of question a frame exists to settle. With a frame brief, skip this entirely; the leading hypothesis is the bottleneck.
 
 Ask the user: "What's the primary bottleneck in the current newsletter pipeline?"
+
 - header: "Bottleneck"
 - options:
   - label: "⭐ Recommended: Curation takes too long"

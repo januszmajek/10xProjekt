@@ -8,10 +8,12 @@ description: Review implementation against plan for drift, dangerous decisions, 
 Compare actual implementation work against the original plan to catch drift, dangerous decisions, architecture violations, and pattern misuse before they compound.
 
 Two granularities:
+
 - **Phase review**: after a single phase — fast, focused on that phase's changes
 - **Full plan review**: after all phases — comprehensive sweep
 
 Two modes:
+
 - **Fresh review**: analyze → findings → interactive triage
 - **Resume triage**: load a saved report and jump to per-issue triage
 
@@ -43,6 +45,7 @@ Create a task named "Implementation Review" with active form "Loading context"
    If the range can't be cleanly determined, fall back to commits whose messages reference the plan/feature.
 
 Compare changed-file list against plan-file list:
+
 - **In plan AND in diff** → expected change, verify content matches intent
 - **In diff but NOT in plan** → unplanned change, investigate and flag
 - **In plan but NOT in diff** → potentially missing implementation
@@ -60,6 +63,7 @@ Launch **two** sub-agents simultaneously. Each gets targeted context — don't d
 Give it: the "Changes Required" text for the reviewed phases, the list of file paths to read.
 
 Instructions: for each planned change, read the actual file and verify implementation matches intent. Check for:
+
 - Changes implemented differently than planned (intent mismatch, not formatting)
 - Planned items skipped without documentation
 - Additions not described in the plan (scope creep)
@@ -99,6 +103,7 @@ For each reviewed phase:
 Update the task's active form to "Compiling findings"
 
 Each finding has:
+
 - **ID**: F1, F2, F3…
 - **Severity**: CRITICAL / WARNING / OBSERVATION (how bad if ignored)
 - **Impact**: LOW / MEDIUM / HIGH (how much focus the decision needs)
@@ -112,11 +117,11 @@ Each finding has:
 
 Orthogonal to severity. A CRITICAL with LOW impact (obvious one-line fix) is cheap; a WARNING with HIGH impact (architectural rework) deserves careful thought.
 
-| Impact | Meaning |
-|---|---|
-| 🏃 **LOW** | Quick decision. Fix is obvious and narrowly scoped. Safe to batch. |
-| 🔎 **MEDIUM** | Worth pausing. Real tradeoff or non-trivial edit — think before deciding. |
-| 🔬 **HIGH** | Architectural stakes. Wide blast radius, strategic implications, or unclear best path. |
+| Impact        | Meaning                                                                                |
+| ------------- | -------------------------------------------------------------------------------------- |
+| 🏃 **LOW**    | Quick decision. Fix is obvious and narrowly scoped. Safe to batch.                     |
+| 🔎 **MEDIUM** | Worth pausing. Real tradeoff or non-trivial edit — think before deciding.              |
+| 🔬 **HIGH**   | Architectural stakes. Wide blast radius, strategic implications, or unclear best path. |
 
 ### Fix options
 
@@ -125,6 +130,7 @@ Default to **one** fix. Only offer two when there's a genuine tradeoff a smart r
 **LOW-impact findings**: just `Fix: [one line]`. Noise isn't helpful when the answer is obvious.
 
 **MEDIUM/HIGH-impact findings**: each option gets:
+
 ```
 [1-sentence approach] · Strength: [advantage, ideally grounded in code/plan evidence] · Tradeoff: [cost or risk] · Confidence: HIGH|MED|LOW — [1-line why] · Blind spot: [what we haven't verified, or "None significant"]
 ```
@@ -134,6 +140,7 @@ When offering two options, mark exactly one `⭐ Recommended`.
 ### Dimension verdicts
 
 PASS / WARNING / FAIL per dimension:
+
 - **Plan Adherence** — planned changes implemented as described? FAIL on MISSING or major DRIFT.
 - **Scope Discipline** — "not doing" boundaries respected? WARNING if EXTRA changes exist but are benign.
 - **Safety & Quality** — security, performance, reliability, data safety. FAIL on any CRITICAL finding.
@@ -268,6 +275,7 @@ Save to `context/changes/<change-id>/reviews/impl-review.md` (or `context/change
 
 ```markdown
 <!-- IMPL-REVIEW-REPORT -->
+
 # Implementation Review: [Plan Title]
 
 - **Plan**: [plan file path]
@@ -278,14 +286,14 @@ Save to `context/changes/<change-id>/reviews/impl-review.md` (or `context/change
 
 ## Verdicts
 
-| Dimension | Verdict |
-|-----------|---------
-| Plan Adherence | PASS/WARNING/FAIL |
-| Scope Discipline | PASS/WARNING/FAIL |
-| Safety & Quality | PASS/WARNING/FAIL |
-| Architecture | PASS/WARNING/FAIL |
+| Dimension           | Verdict           |
+| ------------------- | ----------------- |
+| Plan Adherence      | PASS/WARNING/FAIL |
+| Scope Discipline    | PASS/WARNING/FAIL |
+| Safety & Quality    | PASS/WARNING/FAIL |
+| Architecture        | PASS/WARNING/FAIL |
 | Pattern Consistency | PASS/WARNING/FAIL |
-| Success Criteria | PASS/WARNING/FAIL |
+| Success Criteria    | PASS/WARNING/FAIL |
 
 ## Findings
 
@@ -352,6 +360,7 @@ Walk findings in severity order (CRITICAL → WARNING → OBSERVATION). For each
 
 **With 2 fix options:**
 Ask the user:
+
 ```
 question: "F[N] — [title]\n\nSeverity: [sev icon] [SEV]\nImpact: [impact icon] [LEVEL] — [meaning]\nDimension: [dim]\nLocation: [loc]\n\nDetail: [detail]\n\n[Fix A block]\n\n[Fix B block]"
 header: "Finding [current] of [total remaining]"
@@ -369,6 +378,7 @@ multiSelect: false
 
 **With 1 fix option:**
 Ask the user:
+
 ```
 question: "F[N] — [title]\n\nSeverity: [sev icon] [SEV]\nImpact: [impact icon] [LEVEL] — [meaning]\nDimension: [dim]\nLocation: [loc]\n\nDetail: [detail]\n\n[Fix block]"
 header: "Finding [current] of [total remaining]"
@@ -385,6 +395,7 @@ multiSelect: false
 ```
 
 **Handling responses:**
+
 - **Apply Fix A/B / Fix now**: show the exact before/after code change. Ask for confirmation ("Apply this?"), then perform the edit. Mark FIXED (record which option, e.g. "Fixed via Fix A").
 - **Fix differently**: Ask the user for the preferred approach, perform the edit, mark FIXED.
 - **Record as lesson**: pre-fill four lessons-entry fields directly from the finding — `Context` from the finding's Location, `Problem` from the finding's Detail, `Rule` and `Applies to` left as empty placeholders for the user to fill. Show the proposed entry as a complete markdown block and ask the user to edit / confirm via Ask the user: ("Approve this entry?" / "Edit before saving" / "Cancel"). On confirm, append the entry as a new H2 section to `context/foundation/lessons.md` — if the file does not exist, create it first with this canonical 5-line header (no separate template file; the header is embedded inline here):
@@ -397,6 +408,7 @@ multiSelect: false
   ```
 
   The pre-fill-then-confirm flow is the load-bearing UX detail; the user must see the full proposed entry with the pre-filled Context/Problem and have a chance to edit Rule and Applies-to before append. After the append succeeds, **always** ask a follow-up via Ask the user: "Lesson saved. Also apply the fix to the current code?" with options "Yes — fix now" / "No — lesson only". **Never skip this question or decide on the user's behalf** — whether the fix is trivial, out of scope, or spans many files, the decision belongs to the user. If yes: show the before/after code change, perform the edit, mark `FIXED + ACCEPTED-AS-RULE: <rule title>`. If no: mark `ACCEPTED-AS-RULE: <rule title>` (finding stays unfixed, rule is recorded for future work).
+
 - **Skip** → SKIPPED. Move on, don't argue.
 - **Other (free text)**: interpret the user's intent. Common intents: "fix differently" (especially in dual-fix context) → Ask the user for the preferred approach, perform the edit, mark FIXED; "accept risk" → mark ACCEPTED with the user's justification; "dismiss"/"disagree" → mark DISMISSED.
 
@@ -425,7 +437,7 @@ If there's a saved report, update it with final decisions. Mark the review task 
 - Be specific. "src/auth/handler.ts:42 — SQL query built with string concatenation, vulnerable to injection" — not "there might be a security issue somewhere".
 - Don't flag style preferences unless they matter. If the code works and follows the plan, minor style differences from existing code are observations, not warnings.
 - If the plan itself was flawed (e.g., planned an insecure approach), flag it — this review catches plan issues too.
-- Impact is about *decision effort*, not *severity*. LOW impact on a CRITICAL finding means the fix is obvious; HIGH impact on a WARNING means the tradeoff is real.
+- Impact is about _decision effort_, not _severity_. LOW impact on a CRITICAL finding means the fix is obvious; HIGH impact on a WARNING means the tradeoff is real.
 - Two fix options only when there's a genuine tradeoff. Don't invent alternatives for trivial fixes.
 - When reviewing a single phase, still check if changes from that phase broke assumptions of previous phases. Phases can interact.
 - During triage, keep momentum. User already read the report.

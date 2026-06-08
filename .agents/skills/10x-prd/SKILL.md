@@ -15,6 +15,7 @@ description: >
 This skill is the second link in the bootstrap chain. For greenfield: `/10x-shape → /10x-prd → 10x-tech-stack-selector → bootstrapper`. For brownfield: `/10x-shape → /10x-prd → 10x-stack-assess → 10x-health-check`. Its single job: take a shaped notes file and emit a `context/foundation/prd.md` that conforms to the locked PRD schema, routing every gap to `## Open Questions` rather than inventing content.
 
 The skill auto-routes to the correct template based on `context_type` in the input:
+
 - **greenfield** → 11-section PRD template (product built from scratch)
 - **brownfield** → 12-section PRD template (delta-change to an existing system)
 
@@ -26,7 +27,7 @@ The locked schema this skill conforms to lives at `../10x-shape/references/prd-s
 
 **Use when**: the user has run `/10x-shape` (and `context/foundation/shape-notes.md` exists with a checkpoint block), OR the user has a raw notes file they want turned into a PRD draft, OR the user explicitly asks to (re-)generate `context/foundation/prd.md`.
 
-**Skip when**: the user is still ideating and has no notes — point at `/10x-shape` first. Skip also when the user wants to *edit* an existing PRD by hand — this skill writes whole files; surgical edits are out of scope.
+**Skip when**: the user is still ideating and has no notes — point at `/10x-shape` first. Skip also when the user wants to _edit_ an existing PRD by hand — this skill writes whole files; surgical edits are out of scope.
 
 ## Relationship to other skills
 
@@ -62,6 +63,7 @@ If the file exists, read it FULLY (no `limit`/`offset`) and proceed to Step 1.5.
 If the file does not exist, ask:
 
 Ask the user: "No input file found at `<resolved-path>`. How would you like to proceed?" with options:
+
 - "Run /10x-shape first (Recommended)" (description: "Stop here. Run /10x-shape to produce shape-notes.md, then re-invoke /10x-prd.")
 - "Paste raw notes" (description: "I'll wait for you to paste any notes you have. The thin-input check will warn about missing signals.")
 - "Cancel" (description: "Exit without changes.")
@@ -103,7 +105,7 @@ Score the input on a 0–4 shaped-vs-thin heuristic. Each signal contributes 1 p
 **Brownfield signals** (replace signal 1 when `context_type: brownfield`):
 
 1. **Frontmatter `checkpoint:` block present AND `context_type: brownfield`** — strongest signal that this came from `/10x-shape` in brownfield mode. Also check for `## Current System` section in the body.
-2–4. Same as greenfield.
+   2–4. Same as greenfield.
 
 Compute the total. Document the heuristic explicitly in the conversation so a future maintainer can tune it:
 
@@ -135,6 +137,7 @@ time to run /10x-shape first, the resulting PRD will be substantially stronger.
 Then ask:
 
 Ask the user: "How would you like to proceed?" with options:
+
 - "Run /10x-shape first (Recommended)" (description: "Stop here. Use /10x-shape to fill in the missing signals, then re-invoke /10x-prd.")
 - "Proceed anyway" (description: "Generate the PRD from what's there. Missing pieces land in ## Open Questions verbatim.")
 - "Cancel" (description: "Exit without changes.")
@@ -237,7 +240,6 @@ Before any disk write, run a self-review pass against the schema's required-sect
 **Content-level lint for technical leak:**
 
 5. Scan all `##`-level section bodies (excluding brownfield `## Current System Overview`, where naming the existing stack is allowed) for tokens that indicate implementation detail has leaked into the PRD. Treat each hit as a leak unless it is part of a verbatim user quotation explicitly being routed to Open Questions:
-
    - **Vendor / hosted-service names**: `OpenRouter`, `Stripe`, `Auth0`, `Supabase`, `Firebase`, `Vercel`, `Cloudflare`, `AWS`, `GCP`, `Azure`, `OpenAI`, `Anthropic`, etc. (any proper-noun product/service).
    - **Schema / ORM notation**: `(FK)`, `nullable`, `_hash`, `_at` column suffixes presented as field lists, `password_hash`, `cascade`, `soft-delete`, `hard-delete`, `migration`, `backfill`.
    - **Runtime location**: `client-side`, `server-side`, `on the edge`, `in the cache`, `in the worker`.
@@ -286,6 +288,7 @@ If the file does not exist, write to `context/foundation/prd.md` and proceed to 
 If the file exists, ask:
 
 Ask the user: "context/foundation/prd.md already exists. How would you like to proceed?" with options:
+
 - "Save as prd-vN.md (Recommended)" (description: "Preserve history. The new PRD lands at the next available prd-vN.md slot. The unversioned prd.md is unchanged.")
 - "Overwrite prd.md" (description: "Replace the existing prd.md. The prior version is lost (unless you've committed it).")
 - "Abort" (description: "Exit without writes. No collision resolution.")
@@ -384,7 +387,6 @@ STOP. Do not chain into another skill automatically.
 2. **Schema is the contract.** `../10x-shape/references/prd-schema.md` defines frontmatter keys, section names, and section order. Re-read it at every invocation. Re-validate the in-memory PRD against it in Step 3c before writing. Drift between this skill and the schema is the failure mode this skill exists to prevent.
 
 3. **Stack openness is binding — and broader than just stack names.** The forbidden vocabulary in a generated PRD covers seven categories, not just frameworks:
-
    - **Frameworks, databases, hosting platforms, specific libraries** — the original rule.
    - **Vendor / hosted-service names** — OpenRouter, Stripe, Auth0, Supabase, Firebase, Vercel, Cloudflare, AWS/GCP/Azure, OpenAI, Anthropic, and any other proper-noun product or service.
    - **Schema / ORM notation** — field-level lists, `(FK)`, `nullable`, `_hash` columns, `password_hash`, `cascade-delete`, `soft-delete`, `hard-delete`, `migration`, `backfill`. (Entities surface naturally in FRs and User Stories; column-level schema is a downstream concern.)

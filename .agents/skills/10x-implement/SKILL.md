@@ -105,7 +105,6 @@ After implementing a phase:
 - Update your progress in your todos and in the plan's `## Progress` section
 - **Mutate ONLY the `## Progress` section.** Phase blocks (Overview, Changes Required, Success Criteria) are read-only. Use file editing to flip `- [ ] N.M <title>` → `- [x] N.M <title>` in Progress as each step completes. Do NOT edit Phase block bullets, do NOT add HTML comment progress markers at the bottom of the plan, and do NOT write any state-file sidecar.
 - **Run the phase-end commit ritual**: After all automated checks pass for the phase, walk through this sequenced ritual to author one Conventional-Commits commit and write the closing short SHA back into every Progress row flipped during the phase.
-
   1. **Manual confirmation gate.** Inform the human that automated verification passed and list the manual verification items from the plan. Pause here. Do not proceed until the human confirms manual testing succeeded. Use this format:
 
      ```
@@ -131,7 +130,7 @@ After implementing a phase:
 
   2. **Compute the staging set.** Take the touched-file set maintained during the phase (see "Tracking files touched during a phase" above) and union it with `{context/changes/<change-id>/plan.md}`. The plan file is always staged because each phase produces at least one modification to its `## Progress` section.
 
-  3. **Detect unrelated dirty paths.** Run `git status --porcelain` and intersect with paths *outside* the staging set. If the dirty-but-untouched set is non-empty, present the offending paths and ask the user:
+  3. **Detect unrelated dirty paths.** Run `git status --porcelain` and intersect with paths _outside_ the staging set. If the dirty-but-untouched set is non-empty, present the offending paths and ask the user:
 
      Ask the user: "<N> unrelated path(s) are dirty. How should I handle them?" with options:
      - "Continue — stage only the planned set (Recommended)" (description: "Commit only files this phase touched. Leave the unrelated paths dirty for you to handle separately.")
@@ -176,7 +175,6 @@ After implementing a phase:
   8. **Capture the short SHA.** Run `git rev-parse --short HEAD` and store as `SHA`. Skip this step if `SHA=""` was set by step 5.
 
   9. **Write the SHA back into Progress.** For every Progress row flipped during this phase, run a targeted file edit:
-
      - Find: `- [x] N.M <title>` (no existing ` — <sha>` suffix at end of line)
      - Replace with: `- [x] N.M <title> — <SHA>`
 
@@ -199,6 +197,7 @@ After implementing a phase:
 
   **If user chooses to clear**: Copy the resume command to clipboard and display it:
   1. Copy:
+
      ```bash
      echo -n "/10x-implement <change-id> phase [next-phase-number]" | pbcopy 2>/dev/null || echo -n "/10x-implement <change-id> phase [next-phase-number]" | clip.exe 2>/dev/null || echo -n "/10x-implement <change-id> phase [next-phase-number]" | xclip -selection clipboard 2>/dev/null || true
      ```
@@ -207,6 +206,7 @@ After implementing a phase:
      # PowerShell (Windows)
      Set-Clipboard "/10x-implement <change-id> phase [next-phase-number]"
      ```
+
   2. Display:
      ```
      → /10x-implement <change-id> phase [next-phase-number] (✓ copied)
@@ -280,8 +280,9 @@ Summary:
 
 Ask the user:
 "Plan complete. Would you like a final implementation review?" with options:
-  - "Run full review (/10x-impl-review)" (description: "Comprehensive review of all phases against the plan. Catches cross-phase issues.")
-  - "Skip review — I'm satisfied" (description: "No review needed. Mark the plan as done.")
+
+- "Run full review (/10x-impl-review)" (description: "Comprehensive review of all phases against the plan. Catches cross-phase issues.")
+- "Skip review — I'm satisfied" (description: "No review needed. Mark the plan as done.")
 
 If user chooses review → run `/10x-impl-review <change-id>` (no phase number = full plan review).
 

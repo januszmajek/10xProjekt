@@ -108,6 +108,7 @@ Ask one confirmation:
 
 Ask the user: "Are these priors correct, or do you want to correct anything before we proceed?"
 Options:
+
 - "Correct — proceed (Recommended)": Continue with these priors.
 - "Correct a value": The AI assistant will ask which field to correct, then update an in-memory override (the PRD on disk is unchanged).
 - "Stop — fix the PRD first": Exit. Re-run /10x-prd to fix priors, then re-invoke /10x-tech-stack-selector.
@@ -178,6 +179,7 @@ If the file exists, ask:
 
 Ask the user: "context/foundation/tech-stack.md already exists. How would you like to proceed?"
 Options:
+
 - "Overwrite (Recommended)": Replace the existing tech-stack.md with the new selection. The prior version is lost unless committed.
 - "Save as tech-stack-v2.md": Preserve history. New selection lands at the next available tech-stack-vN.md slot.
 - "Abort": Exit without writing. The conversation rationale is preserved in chat only.
@@ -240,7 +242,6 @@ hints:
   has_ai: <bool>
   has_background_jobs: <bool>
 ---
-
 ## Why this stack
 
 <one paragraph, ≤ 200 words>
