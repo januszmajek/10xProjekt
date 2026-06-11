@@ -15,7 +15,7 @@ This skill is the brownfield counterpart to `/10x-bootstrapper`. Where bootstrap
 
 The skill sits in the brownfield chain: `/10x-shape → /10x-prd → /10x-stack-assess → /10x-health-check`. Its single job: audit the project's dependency health, test infrastructure, CI/CD configuration, and configuration completeness, then produce a structured report with prioritized fixes and an agent-readiness verdict.
 
-When `context/foundation/stack-assessment.md` exists (from `/10x-stack-assess`), health-check links its findings to the quality-gate gaps identified there. The two reports are complementary: stack-assess evaluates the _stack choice_ against quality gates; health-check evaluates the _project state_ against operational health criteria.
+When `context/foundation/stack-assessment.md` exists (from `/10x-stack-assess`), health-check links its findings to the quality-gate gaps identified there. The two reports are complementary: stack-assess evaluates the *stack choice* against quality gates; health-check evaluates the *project state* against operational health criteria.
 
 ## When to use, when to skip
 
@@ -74,16 +74,16 @@ If markers are found, detect the language family from the marker (same detection
 
 Check for a lockfile matching the detected language family:
 
-| Language family | Expected lockfiles                                                                    |
-| --------------- | ------------------------------------------------------------------------------------- |
-| JS/TS           | `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `bun.lockb`                       |
-| Python          | `poetry.lock`, `uv.lock`, `Pipfile.lock`, `requirements.txt` (weak — not a true lock) |
-| Rust            | `Cargo.lock`                                                                          |
-| Go              | `go.sum`                                                                              |
-| Ruby            | `Gemfile.lock`                                                                        |
-| PHP             | `composer.lock`                                                                       |
-| .NET            | `packages.lock.json` (NuGet)                                                          |
-| Dart            | `pubspec.lock`                                                                        |
+| Language family | Expected lockfiles |
+|---|---|
+| JS/TS | `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `bun.lockb` |
+| Python | `poetry.lock`, `uv.lock`, `Pipfile.lock`, `requirements.txt` (weak — not a true lock) |
+| Rust | `Cargo.lock` |
+| Go | `go.sum` |
+| Ruby | `Gemfile.lock` |
+| PHP | `composer.lock` |
+| .NET | `packages.lock.json` (NuGet) |
+| Dart | `pubspec.lock` |
 
 If no lockfile is found, flag as a finding:
 
@@ -97,16 +97,16 @@ If no lockfile is found, flag as a finding:
 
 Dispatch to the ecosystem's audit tool by language family. The dispatch table matches the bootstrapper's `audit_commands` pattern:
 
-| Language family | Audit command                                           | Notes                                                              |
-| --------------- | ------------------------------------------------------- | ------------------------------------------------------------------ |
-| JS/TS           | `npm audit --json`                                      | Exits non-zero when vulnerabilities exist — not a halt condition   |
-| Python          | `pip-audit --format json`                               | Falls back to skip if pip-audit not installed                      |
-| Rust            | `cargo audit --json`                                    | Falls back to skip if cargo-audit not installed                    |
-| Go              | `govulncheck -json ./...`                               | Falls back to skip if govulncheck not installed                    |
-| Ruby            | `bundle audit check --update`                           | Human-readable output, parse line-by-line                          |
-| PHP             | `composer audit --format json`                          | Requires Composer 2.4+                                             |
-| .NET            | `dotnet list package --vulnerable --include-transitive` | Human-readable, parse for severity markers                         |
-| Java, Dart      | (skip)                                                  | No built-in audit tool; note the skip and recommend external tools |
+| Language family | Audit command | Notes |
+|---|---|---|
+| JS/TS | `npm audit --json` | Exits non-zero when vulnerabilities exist — not a halt condition |
+| Python | `pip-audit --format json` | Falls back to skip if pip-audit not installed |
+| Rust | `cargo audit --json` | Falls back to skip if cargo-audit not installed |
+| Go | `govulncheck -json ./...` | Falls back to skip if govulncheck not installed |
+| Ruby | `bundle audit check --update` | Human-readable output, parse line-by-line |
+| PHP | `composer audit --format json` | Requires Composer 2.4+ |
+| .NET | `dotnet list package --vulnerable --include-transitive` | Human-readable, parse for severity markers |
+| Java, Dart | (skip) | No built-in audit tool; note the skip and recommend external tools |
 
 Run the resolved command from cwd using a shell command. Capture stdout, stderr, and exit code. The audit tool's exit code is informational — health-check does NOT halt on a non-zero audit exit.
 
@@ -125,12 +125,12 @@ When the tool distinguishes direct from transitive dependencies, surface the bre
 
 If the language family supports it, run a quick staleness check:
 
-| Language family | Command                                          | What it shows                                |
-| --------------- | ------------------------------------------------ | -------------------------------------------- |
-| JS/TS           | `npm outdated --json`                            | Current vs wanted vs latest for each package |
-| Python          | `pip list --outdated --format json`              | Current vs latest                            |
-| Rust            | `cargo outdated --root-deps-only` (if installed) | Outdated direct deps                         |
-| Ruby            | `bundle outdated --only-explicit`                | Outdated direct gems                         |
+| Language family | Command | What it shows |
+|---|---|---|
+| JS/TS | `npm outdated --json` | Current vs wanted vs latest for each package |
+| Python | `pip list --outdated --format json` | Current vs latest |
+| Rust | `cargo outdated --root-deps-only` (if installed) | Outdated direct deps |
+| Ruby | `bundle outdated --only-explicit` | Outdated direct gems |
 
 This check is informational — surface major version gaps and packages more than 2 major versions behind. Do not report every minor version bump.
 
@@ -151,17 +151,17 @@ Outdated: <N> packages with major version gaps.
 
 Detect the test runner from configuration files:
 
-| Language family | Detection sources                                                                                             | Test runners                             |
-| --------------- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| JS/TS           | `package.json` scripts/devDeps, `vitest.config.*`, `jest.config.*`, `playwright.config.*`, `cypress.config.*` | Vitest, Jest, Playwright, Cypress, Mocha |
-| Python          | `pyproject.toml [tool.pytest]`, `setup.cfg [tool:pytest]`, `tox.ini`, `pytest.ini`                            | pytest, unittest, tox                    |
-| Rust            | `Cargo.toml` (built-in `cargo test`)                                                                          | cargo test                               |
-| Go              | (built-in `go test`)                                                                                          | go test                                  |
-| Ruby            | `Gemfile` deps, `.rspec`, `Rakefile`                                                                          | RSpec, Minitest                          |
-| PHP             | `phpunit.xml*`, `composer.json` deps                                                                          | PHPUnit, Pest                            |
-| .NET            | `*.csproj` references                                                                                         | xUnit, NUnit, MSTest                     |
+| Language family | Detection sources | Test runners |
+|---|---|---|
+| JS/TS | `package.json` scripts/devDeps, `vitest.config.*`, `jest.config.*`, `playwright.config.*`, `cypress.config.*` | Vitest, Jest, Playwright, Cypress, Mocha |
+| Python | `pyproject.toml [tool.pytest]`, `setup.cfg [tool:pytest]`, `tox.ini`, `pytest.ini` | pytest, unittest, tox |
+| Rust | `Cargo.toml` (built-in `cargo test`) | cargo test |
+| Go | (built-in `go test`) | go test |
+| Ruby | `Gemfile` deps, `.rspec`, `Rakefile` | RSpec, Minitest |
+| PHP | `phpunit.xml*`, `composer.json` deps | PHPUnit, Pest |
+| .NET | `*.csproj` references | xUnit, NUnit, MSTest |
 
-If a test runner is detected, attempt a dry run to verify tests can execute by executing a shell command:
+If a test runner is detected, attempt a dry run to verify tests can execute by running a shell command:
 
 ```bash
 # JS/TS examples:
@@ -186,7 +186,7 @@ Surface findings:
 
 #### 2b. CI/CD configuration evaluation
 
-Check for CI/CD configuration files by executing a shell command:
+Check for CI/CD configuration files by running a shell command:
 
 ```bash
 find . -maxdepth 2 \( -name ".github" -o -name ".gitlab-ci.yml" -o -name "Jenkinsfile" -o -name ".circleci" -o -name "cloudbuild.yaml" -o -name "bitbucket-pipelines.yml" -o -name ".travis.yml" \) 2>/dev/null
@@ -194,13 +194,13 @@ find . -maxdepth 2 \( -name ".github" -o -name ".gitlab-ci.yml" -o -name "Jenkin
 
 If a CI configuration is found, read it and evaluate coverage:
 
-| Stage      | What to check                                                              |
-| ---------- | -------------------------------------------------------------------------- |
-| Lint       | Is there a lint step? (eslint, ruff, clippy, rubocop, phpstan, etc.)       |
-| Test       | Is there a test step? Does it match the detected test runner?              |
-| Build      | Is there a build/compile step?                                             |
-| Type check | Is there a type-check step? (tsc, mypy, pyright, etc.)                     |
-| Security   | Is there a security scan step? (npm audit, Snyk, CodeQL, Dependabot, etc.) |
+| Stage | What to check |
+|---|---|
+| Lint | Is there a lint step? (eslint, ruff, clippy, rubocop, phpstan, etc.) |
+| Test | Is there a test step? Does it match the detected test runner? |
+| Build | Is there a build/compile step? |
+| Type check | Is there a type-check step? (tsc, mypy, pyright, etc.) |
+| Security | Is there a security scan step? (npm audit, Snyk, CodeQL, Dependabot, etc.) |
 
 Surface a coverage summary:
 
@@ -215,15 +215,15 @@ If no CI configuration is found, note it as a Category B item — the learner wi
 
 Check for common development configuration:
 
-| File                                     | Purpose                              | Severity if missing                      |
-| ---------------------------------------- | ------------------------------------ | ---------------------------------------- |
-| `.editorconfig`                          | Consistent formatting across editors | low                                      |
-| `.prettierrc*` / `biome.json` (JS/TS)    | Code formatting                      | medium (if no formatter configured)      |
-| `.eslintrc*` / `eslint.config.*` (JS/TS) | Linting                              | medium                                   |
-| `tsconfig.json` with `strict: true` (TS) | Type strictness                      | high (if TS project without strict)      |
-| `.gitignore`                             | Tracked file exclusions              | high                                     |
-| `.env.example` / `.env.template`         | Environment variable documentation   | low                                      |
-| `CLAUDE.md` / `AGENTS.md`                | Agent instruction files              | Category B — covered in agent onboarding |
+| File | Purpose | Severity if missing |
+|---|---|---|
+| `.editorconfig` | Consistent formatting across editors | low |
+| `.prettierrc*` / `biome.json` (JS/TS) | Code formatting | medium (if no formatter configured) |
+| `.eslintrc*` / `eslint.config.*` (JS/TS) | Linting | medium |
+| `tsconfig.json` with `strict: true` (TS) | Type strictness | high (if TS project without strict) |
+| `.gitignore` | Tracked file exclusions | high |
+| `.env.example` / `.env.template` | Environment variable documentation | low |
+| `CLAUDE.md` / `AGENTS.md` | Agent instruction files | Category B — covered in agent onboarding |
 
 Surface missing files grouped by severity.
 
@@ -242,7 +242,7 @@ In-check: test runner <detected/not detected>, CI <provider/not detected>,
 
 #### 3a. Cross-reference with stack-assessment
 
-If `context/foundation/stack-assessment.md` exists, read it and link findings:
+If `context/foundation/stack-assessment.md` exists, read its content and link findings:
 
 - If stack-assess identified a quality-gate failure (e.g., "typed: fail"), and health-check found no type-checking in CI → reinforce: "the stack lacks type safety AND CI doesn't enforce types — compensation is doubly important"
 - If stack-assess identified compensation strategies → check whether the recommended instruction-file entries exist (are `CLAUDE.md` / `AGENTS.md` present? Do they contain the recommended rules?)
@@ -284,7 +284,6 @@ These findings are real but the learner will set them up in upcoming steps. Fram
 - **Missing deployment configuration** → covered in the infrastructure lesson. Acknowledge, don't prioritize.
 
 When the health-check runs standalone (outside the course chain), all findings go into a single ranked list without the A/B split — the course-context framing only applies when the user is progressing through the brownfield chain. When running inside the 10xDevs course chain, enrich forward-references with lesson titles and links:
-
 - agent onboarding = [Agent Onboarding: Agents.md, AI Rules i feedback loops (M1L4)](https://platforma.przeprogramowani.pl/external/10xdevs-3/m1-l4)
 - infrastructure & CI/CD = [Sprint Zero z Agentem: infrastruktura, walking skeleton i pierwszy deploy (M1L5)](https://platforma.przeprogramowani.pl/external/10xdevs-3/m1-l5)
 
@@ -297,23 +296,23 @@ Each fix entry (in both categories) must include:
 
 ### Step 4 — Write health-check.md
 
-Check for collision by executing a shell command:
+Check for collision by checking if the file `context/foundation/health-check.md` exists.
 
-```bash
-test -f context/foundation/health-check.md
-```
-
-If the file exists, ask:
-
-Ask the user: "context/foundation/health-check.md already exists. How would you like to proceed?" with the following options:
-
-- "Overwrite (Recommended)": "Replace the existing health check. The prior version is lost unless committed."
-- "Save as health-check-v2.md": "Preserve history. New report lands at the next available version slot."
-- "Abort": "Exit without writing. The conversation findings are preserved in chat only."
+If the file exists, ask the user:
+- question: "context/foundation/health-check.md already exists. How would you like to proceed?"
+  header: "Collision"
+  options:
+  - label: "Overwrite (Recommended)"
+    description: "Replace the existing health check. The prior version is lost unless committed."
+  - label: "Save as health-check-v2.md"
+    description: "Preserve history. New report lands at the next available version slot."
+  - label: "Abort"
+    description: "Exit without writing. The conversation findings are preserved in chat only."
+  multiSelect: false
 
 Build the output file per `references/health-check-schema.md`.
 
-Write to `context/foundation/health-check.md` (creating `context/foundation/` if it doesn't exist).
+Write the content to `context/foundation/health-check.md` (creating `context/foundation/` if it doesn't exist).
 
 After the write, print the closing summary:
 
