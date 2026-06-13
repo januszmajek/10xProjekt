@@ -53,24 +53,22 @@ Before any reading, identify what kinds of upstream artifacts the user passed in
 
 **Question count and focus scale with what's provided:**
 
-| Upstream artifacts      | LOW | MEDIUM | HIGH  | What changes vs. baseline                                                                                                           |
-| ----------------------- | --- | ------ | ----- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Task only (baseline)    | 4–6 | 7–10   | 11–15 | Full questioning across all relevant categories.                                                                                    |
-| Task + research         | 3–5 | 5–7    | 8–11  | Skip questions whose answer is already in the research doc. Don't re-spawn sub-agents to find what research already mapped.         |
-| Task + frame            | 2–3 | 4–6    | 7–9   | Skip [D]iagnostic categories — frame settled problem framing. Treat the Reframed (or Confirmed) Problem Statement as authoritative. |
-| Task + frame + research | 1–2 | 3–5    | 5–7   | Skip both. Ask only [S]olution-design questions that genuinely need user input.                                                     |
+| Upstream artifacts          | LOW   | MEDIUM | HIGH  | What changes vs. baseline                                                                                                              |
+| --------------------------- | ----- | ------ | ----- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Task only (baseline)        | 4–6   | 7–10   | 11–15 | Full questioning across all relevant categories.                                                                                       |
+| Task + research             | 3–5   | 5–7    | 8–11  | Skip questions whose answer is already in the research doc. Don't re-spawn sub-agents to find what research already mapped.            |
+| Task + frame                | 2–3   | 4–6    | 7–9   | Skip [D]iagnostic categories — frame settled problem framing. Treat the Reframed (or Confirmed) Problem Statement as authoritative.    |
+| Task + frame + research     | 1–2   | 3–5    | 5–7   | Skip both. Ask only [S]olution-design questions that genuinely need user input.                                                        |
 
 **Principle**: every artifact passed in is a source of decisions already made. Reading them counts as listening to the user. Don't ask the user what they already wrote down.
 
 **When a frame is present**, read it FULLY and treat as authoritative:
-
 - Copy the **Reported Observation** + **Reframed (or Confirmed) Problem Statement** as the task definition. Do not re-question the framing.
 - Lift the **Hypothesis Investigation** table and **Narrowing Signals** into your "Current State Analysis" — this work is already done.
 - If the frame **Confidence: LOW** is flagged, surface that in the plan's "Open Risks & Assumptions" and ask ONE clarifying question about how to proceed (verify first, or plan with risk acknowledged).
 - Do NOT re-investigate the framing. Frame owns problem framing; you own solution design.
 
 **When research is present**, read it FULLY and use as the codebase baseline:
-
 - "Code References" section IS your codebase grounding — don't re-spawn Explore agents to find the same files.
 - "Architecture Insights" feed directly into "Current State Analysis."
 - Spawn sub-agents only to fill specific gaps research didn't cover (e.g., the exact files this plan will modify if research was broader).
@@ -139,16 +137,10 @@ Before any reading, identify what kinds of upstream artifacts the user passed in
    Does this feel right, or would you adjust the complexity level?
    ```
 
-   Ask the user: "Does this complexity assessment match your expectations?"
-   - header: "Complexity"
-   - options:
-     - label: "Agree — proceed with [N] questions"
-       description: "The assessment is accurate, let's dig into the details."
-     - label: "Higher — ask more questions"
-       description: "There's more complexity than identified. I'll explain what's missing."
-     - label: "Lower — fewer questions needed"
-       description: "This is simpler than it looks. Let's keep it focused."
-       multiSelect: false
+   Ask the user: "Does this complexity assessment match your expectations?" with options:
+   - "Agree — proceed with [N] questions" (description: "The assessment is accurate, let's dig into the details.")
+   - "Higher — ask more questions" (description: "There's more complexity than identified. I'll explain what's missing.")
+   - "Lower — fewer questions needed" (description: "This is simpler than it looks. Let's keep it focused.")
 
    **Complexity scale:**
 
@@ -178,29 +170,17 @@ Before any reading, identify what kinds of upstream artifacts the user passed in
 
    **Example question with recommendations (software):** `Conflicts` is `[S]` — solution architecture; always asked even when a frame defined the problem.
 
-   Ask the user: "How should the system handle conflicts when two users edit simultaneously?"
-   - header: "Conflicts"
-   - options:
-     - label: "Last write wins"
-       description: "Later save silently overwrites earlier one. · Strength: Zero added complexity, no UI changes needed. · Tradeoff: Users can lose work without warning — acceptable only if edits are rare or low-stakes."
-     - label: "⭐ Recommended: Notify and merge"
-       description: "Show conflict to user, let them choose which version to keep. · Strength: Prevents data loss while keeping UX simple — matches the pattern in existing EditPanel component. · Tradeoff: Adds a conflict resolution modal and WebSocket subscription for real-time detection."
-     - label: "Lock-based"
-       description: "First editor locks the resource; others see read-only until released. · Strength: Prevents conflicts entirely — simplest mental model for users. · Tradeoff: Stale locks require TTL + cleanup logic; blocks legitimate concurrent work."
-       multiSelect: false
+   Ask the user: "How should the system handle conflicts when two users edit simultaneously?" with options:
+   - "Last write wins" (description: "Later save silently overwrites earlier one. · Strength: Zero added complexity, no UI changes needed. · Tradeoff: Users can lose work without warning — acceptable only if edits are rare or low-stakes.")
+   - "⭐ Recommended: Notify and merge" (description: "Show conflict to user, let them choose which version to keep. · Strength: Prevents data loss while keeping UX simple — matches the pattern in existing EditPanel component. · Tradeoff: Adds a conflict resolution modal and WebSocket subscription for real-time detection.")
+   - "Lock-based" (description: "First editor locks the resource; others see read-only until released. · Strength: Prevents conflicts entirely — simplest mental model for users. · Tradeoff: Stale locks require TTL + cleanup logic; blocks legitimate concurrent work.")
 
    **Example question with recommendations (non-software — content/strategy):** `Depth` is `[D]` — diagnostic about audience/scope; skip if a frame brief already settled who this is for.
 
-   Ask the user: "What depth of technical detail should the course module target?"
-   - header: "Depth"
-   - options:
-     - label: "Conceptual overview"
-       description: "High-level principles, no code. · Strength: Accessible to all skill levels, faster to produce. · Tradeoff: Advanced learners may find it too shallow — risks losing engagement."
-     - label: "⭐ Recommended: Hands-on with guided examples"
-       description: "Concepts paired with step-by-step exercises. · Strength: Balances understanding and practice — matches the format that got highest completion rates in 10xDevs2. · Tradeoff: 2-3x more prep time per lesson; requires working example repos."
-     - label: "Deep dive with open challenges"
-       description: "Minimal scaffolding, real-world problems. · Strength: Forces genuine problem-solving, highest learning retention. · Tradeoff: High dropout risk for less experienced learners; harder to support at scale."
-       multiSelect: false
+   Ask the user: "What depth of technical detail should the course module target?" with options:
+   - "Conceptual overview" (description: "High-level principles, no code. · Strength: Accessible to all skill levels, faster to produce. · Tradeoff: Advanced learners may find it too shallow — risks losing engagement.")
+   - "⭐ Recommended: Hands-on with guided examples" (description: "Concepts paired with step-by-step exercises. · Strength: Balances understanding and practice — matches the format that got highest completion rates in 10xDevs2. · Tradeoff: 2-3x more prep time per lesson; requires working example repos.")
+   - "Deep dive with open challenges" (description: "Minimal scaffolding, real-world problems. · Strength: Forces genuine problem-solving, highest learning retention. · Tradeoff: High dropout risk for less experienced learners; harder to support at scale.")
 
    **What to ask about** — adapt categories to the domain of the task:
 
@@ -263,7 +243,7 @@ Before any reading, identify what kinds of upstream artifacts the user passed in
    - Questions with obvious answers given the context already provided
    - Preferences that don't affect the plan's structure or success
 
-   **CRITICAL**: You MUST ask the number of questions appropriate to the confirmed complexity level _and_ the upstream-artifacts scaling from Step 1.0. Do not shortcut this when no upstream artifacts were provided — thorough questioning prevents costly rework. Equally, do not pad questions when a frame or research already covers the ground — re-asking erodes trust in the upstream artifact. Each question should force a real decision, not confirm something obvious.
+   **CRITICAL**: You MUST ask the number of questions appropriate to the confirmed complexity level *and* the upstream-artifacts scaling from Step 1.0. Do not shortcut this when no upstream artifacts were provided — thorough questioning prevents costly rework. Equally, do not pad questions when a frame or research already covers the ground — re-asking erodes trust in the upstream artifact. Each question should force a real decision, not confirm something obvious.
 
 ### Step 2: Research & Discovery
 
@@ -292,7 +272,7 @@ After getting initial clarifications from the user, NOW is when you address the 
    - Read the specific files/directories they mention
    - Only proceed once you've verified the facts yourself
 
-3. **Create research tasks** using the Task tool to track exploration (these appear in the user's status bar). Update them as research completes.
+3. **Create research tasks** using TaskCreate to track exploration (these appear in the user's status bar). Update them via TaskUpdate as research completes.
 
 4. **Spawn parallel sub-tasks for comprehensive research**:
    - Create multiple Task agents to research different aspects concurrently
@@ -328,13 +308,9 @@ After getting initial clarifications from the user, NOW is when you address the 
 
    Then, if there are multiple valid approaches, present them as structured choices:
 
-   Ask the user: "Which implementation approach should we use?"
-   - header: "Approach"
-   - options:
-     - label: "[Option A name]"
-       description: "[Key tradeoffs: simpler but X, or faster but Y]"
-     - label: "[Option B name]"
-       description: "[Key tradeoffs]"
+   Ask the user: "Which implementation approach should we use?" with options:
+   - "[Option A name]" (description: "[Key tradeoffs: simpler but X, or faster but Y]")
+   - "[Option B name]" (description: "[Key tradeoffs]")
 
    If there's clearly one best approach, skip asking the user and explain why you chose it.
    Only ask when the choice genuinely matters and you can't determine the answer from codebase patterns.
@@ -359,18 +335,11 @@ Once aligned on approach:
    3. [Phase name] - [what it accomplishes]
    ```
 
-   Then ask the user: "Does this phase breakdown look right?"
-   - header: "Phases"
-   - options:
-     - label: "Looks good, proceed"
-       description: "Write the detailed plan with these phases."
-     - label: "Needs adjustment"
-       description: "I'll explain what to change before you write the detailed plan."
-     - label: "Too granular"
-       description: "Combine some phases — this is simpler than it looks."
-     - label: "Too coarse"
-       description: "Split some phases — there are hidden complexities."
-       multiSelect: false
+   Then ask the user: "Does this phase breakdown look right?" with options:
+   - "Looks good, proceed" (description: "Write the detailed plan with these phases.")
+   - "Needs adjustment" (description: "I'll explain what to change before you write the detailed plan.")
+   - "Too granular" (description: "Combine some phases — this is simpler than it looks.")
+   - "Too coarse" (description: "Split some phases — there are hidden complexities.")
 
 ### Step 4: Detailed Plan Writing
 
@@ -383,7 +352,7 @@ After structure approval:
    - Update `change.md`: set `status: planned` and `updated: <today>`.
 2. **Use this template structure** (Phase blocks contain plain bullets — `- ` not `- [ ]` — and a single canonical `## Progress` section at the bottom owns the checkbox state, see `references/progress-format.md` for the contract):
 
-```markdown
+````markdown
 # [Feature/Task Name] Implementation Plan
 
 ## Overview
@@ -414,7 +383,7 @@ After structure approval:
 
 ## Critical Implementation Details
 
-This section captures **constraints, gotchas, and ordering requirements that the implementer needs to know before they touch the code** — facts the AI assistant determines during Research & Discovery (Step 2) that aren't visible from the file paths alone.
+This section captures **constraints, gotchas, and ordering requirements that the implementer needs to know before they touch the code** — facts the LLM determines during Research & Discovery (Step 2) that aren't visible from the file paths alone.
 
 This is NOT a place to pre-decide implementation. Default: **omit** the entire section. Include a heading below ONLY when something genuinely surprising or load-bearing applies — and write 1-3 sentences, not bullet templates.
 
@@ -521,7 +490,7 @@ A code snippet appears here ONLY when the change is non-obvious — a tricky reg
 #### Automated
 
 - [ ] 2.1 <…>
-```
+````
 
 The Progress section is mechanical — emit one `### Phase N: <name>` per phase, with `#### Automated` / `#### Manual` subsections enumerating every Success Criteria bullet from that phase as `- [ ] <phase>.<index> <title>`. Omit empty subsections. The Phase blocks themselves carry plain `- ` bullets (no checkboxes); the `## Progress` section is the only place `[ ]` / `[x]` appear.
 
@@ -556,11 +525,11 @@ After writing the full plan, generate a concise brief that gives the reader the 
 
 When a frame brief or research doc was the input, mark the **Source** column to show where the decision came from. This lets readers see the lineage: what was settled upstream vs decided in this planning session.
 
-| Decision        | Choice            | Why (1 sentence) | Source                  |
-| --------------- | ----------------- | ---------------- | ----------------------- |
-| [Decision area] | [What was chosen] | [Core rationale] | Frame / Research / Plan |
-| [Decision area] | [Choice]          | [Rationale]      | Frame / Research / Plan |
-| ...             | ...               | ...              | ...                     |
+| Decision                       | Choice            | Why (1 sentence)  | Source           |
+| ------------------------------ | ----------------- | ----------------- | ---------------- |
+| [Decision area]                | [What was chosen] | [Core rationale]  | Frame / Research / Plan |
+| [Decision area]                | [Choice]          | [Rationale]       | Frame / Research / Plan |
+| ...                            | ...               | ...               | ...              |
 
 (Omit the `Source` column if no upstream artifacts were provided — every row would be `Plan`.)
 
@@ -674,7 +643,7 @@ For non-software: structure, workflow, key dependencies.]
    - Include "what we're NOT doing"
 
 5. **Track Progress**:
-   - Use the Task tool to create planning tasks and update them to mark them completed as you progress
+   - Use TaskCreate to create planning tasks and TaskUpdate to mark them completed as you progress
    - Tasks appear in the user's status bar for visibility
    - Mark tasks completed as you finish research areas
 
@@ -745,68 +714,42 @@ Planning can be context-heavy due to research + iteration. Keep context efficien
 
 Mixed: `Loading UX` is `[S]` (UI behavior — solution detail); `Scale` is `[D]` (problem boundary — how big is the dataset). With a frame brief, ask only `Loading UX`; the scale should already be in the Reframed (or Confirmed) Problem Statement.
 
-Ask the user: "What should the user see while new items load?"
+Ask the user: "What should the user see while new items load?" with options:
 
-- header: "Loading UX"
-- options:
-  - label: "Inline spinner"
-    description: "Small spinner below existing content. · Strength: User keeps seeing current items, minimal UI work. · Tradeoff: Feels slower than skeleton — users see a generic spinner instead of content shape."
-  - label: "⭐ Recommended: Skeleton screens"
-    description: "Placeholder shapes matching item layout. · Strength: Perceived performance is 30-40% better — matches existing LoadingSkeleton component pattern. · Tradeoff: Requires a skeleton variant per item type; breaks if layout changes."
-  - label: "Full-page spinner"
-    description: "Replace content with spinner. · Strength: Simplest to implement — one component, no layout concerns. · Tradeoff: Blocks all interaction; feels broken on slow connections."
-    multiSelect: false
-    Ask the user: "How many items should this handle gracefully?"
-- header: "Scale"
-- options:
-  - label: "⭐ Recommended: Hundreds"
-    description: "Standard offset pagination. · Strength: Simple, well-understood, works with existing SQL queries. · Tradeoff: Breaks down past ~5k items — acceptable given current data volumes."
-  - label: "Thousands"
-    description: "Cursor-based pagination + virtual scrolling. · Strength: Handles growth without performance cliff. · Tradeoff: 2-3x more implementation work; changes API contract."
-  - label: "Tens of thousands"
-    description: "Server-side filtering + virtual list + search. · Strength: Scales indefinitely. · Tradeoff: Significant complexity; requires search index and new API design."
-    multiSelect: false
+- "Inline spinner" (description: "Small spinner below existing content. · Strength: User keeps seeing current items, minimal UI work. · Tradeoff: Feels slower than skeleton — users see a generic spinner instead of content shape.")
+- "⭐ Recommended: Skeleton screens" (description: "Placeholder shapes matching item layout. · Strength: Perceived performance is 30-40% better — matches existing LoadingSkeleton component pattern. · Tradeoff: Requires a skeleton variant per item type; breaks if layout changes.")
+- "Full-page spinner" (description: "Replace content with spinner. · Strength: Simplest to implement — one component, no layout concerns. · Tradeoff: Blocks all interaction; feels broken on slow connections.")
+
+Ask the user: "How many items should this handle gracefully?" with options:
+
+- "⭐ Recommended: Hundreds" (description: "Standard offset pagination. · Strength: Simple, well-understood, works with existing SQL queries. · Tradeoff: Breaks down past ~5k items — acceptable given current data volumes.")
+- "Thousands" (description: "Cursor-based pagination + virtual scrolling. · Strength: Handles growth without performance cliff. · Tradeoff: 2-3x more implementation work; changes API contract.")
+- "Tens of thousands" (description: "Server-side filtering + virtual list + search. · Strength: Scales indefinitely. · Tradeoff: Significant complexity; requires search index and new API design.")
 
 ### Example 2: Content / Education — HIGH complexity (e.g., Course Module Design)
 
 Mixed: `Outcome` is `[D]` (defines what success looks like — pure problem framing); `Levels` is `[S]` (audience-handling strategy — how to structure delivery). With a frame brief, ask only `Levels`; the outcome should be settled.
 
-Ask the user: "What should the learner be able to DO after this module — not just know?"
+Ask the user: "What should the learner be able to DO after this module — not just know?" with options:
 
-- header: "Outcome"
-- options:
-  - label: "⭐ Recommended: Build a working prototype"
-    description: "Learner produces a functional artifact using the techniques taught. · Strength: Forces genuine skill transfer — the artifact proves competence. Matches the 'Innovate' lesson format from 10xDevs3. · Tradeoff: Requires well-designed starter templates and clear acceptance criteria; takes 2-3x longer to prep."
-  - label: "Complete a guided exercise"
-    description: "Step-by-step walkthrough with expected output. · Strength: Low barrier — everyone finishes, builds confidence. · Tradeoff: May produce 'tutorial zombies' who can follow but not apply independently."
-  - label: "Pass a knowledge check"
-    description: "Quiz or code review proving conceptual understanding. · Strength: Fast to create, easy to grade at scale. · Tradeoff: Tests recognition not production — learner may understand but not be able to execute."
-    multiSelect: false
-    Ask the user: "How should this module handle different skill levels in the audience?"
-- header: "Levels"
-- options:
-  - label: "Single track, advanced"
-    description: "One path targeting experienced devs. · Strength: Deep content, no hand-holding, respects expert time. · Tradeoff: Alienates beginners — they'll drop off or flood support channels."
-  - label: "⭐ Recommended: Layered depth"
-    description: "Core path everyone follows + optional deep-dive sections. · Strength: Everyone gets value; advanced learners self-select into harder material. · Tradeoff: More content to maintain; risk of 'optional' sections being ignored."
-  - label: "Separate beginner/advanced tracks"
-    description: "Two parallel paths diverging early. · Strength: Each audience gets perfectly targeted content. · Tradeoff: 2x production cost; splitting a small cohort may hurt community dynamics."
-    multiSelect: false
+- "⭐ Recommended: Build a working prototype" (description: "Learner produces a functional artifact using the techniques taught. · Strength: Forces genuine skill transfer — the artifact proves competence. Matches the 'Innovate' lesson format from 10xDevs3. · Tradeoff: Requires well-designed starter templates and clear acceptance criteria; takes 2-3x longer to prep.")
+- "Complete a guided exercise" (description: "Step-by-step walkthrough with expected output. · Strength: Low barrier — everyone finishes, builds confidence. · Tradeoff: May produce 'tutorial zombies' who can follow but not apply independently.")
+- "Pass a knowledge check" (description: "Quiz or code review proving conceptual understanding. · Strength: Fast to create, easy to grade at scale. · Tradeoff: Tests recognition not production — learner may understand but not be able to execute.")
+
+Ask the user: "How should this module handle different skill levels in the audience?" with options:
+
+- "Single track, advanced" (description: "One path targeting experienced devs. · Strength: Deep content, no hand-holding, respects expert time. · Tradeoff: Alienates beginners — they'll drop off or flood support channels.")
+- "⭐ Recommended: Layered depth" (description: "Core path everyone follows + optional deep-dive sections. · Strength: Everyone gets value; advanced learners self-select into harder material. · Tradeoff: More content to maintain; risk of 'optional' sections being ignored.")
+- "Separate beginner/advanced tracks" (description: "Two parallel paths diverging early. · Strength: Each audience gets perfectly targeted content. · Tradeoff: 2x production cost; splitting a small cohort may hurt community dynamics.")
 
 ### Example 3: Strategy / Process — MEDIUM complexity (e.g., Newsletter Workflow)
 
 `Bottleneck` is `[D]` — pure problem framing (which problem to solve). This is exactly the kind of question a frame exists to settle. With a frame brief, skip this entirely; the leading hypothesis is the bottleneck.
 
-Ask the user: "What's the primary bottleneck in the current newsletter pipeline?"
+Ask the user: "What's the primary bottleneck in the current newsletter pipeline?" with options:
 
-- header: "Bottleneck"
-- options:
-  - label: "⭐ Recommended: Curation takes too long"
-    description: "Finding and evaluating links is the slow step. · Strength: Directly targets time-to-publish — automating curation yields the biggest time savings based on current pipeline timings. · Tradeoff: Automated curation risks losing the personal editorial voice that subscribers value."
-  - label: "Writing the commentary"
-    description: "Links are ready but writing around them is slow. · Strength: AI-assisted drafting can cut this in half. · Tradeoff: Heavy AI drafting can make the newsletter feel generic — needs careful voice calibration."
-  - label: "Distribution and scheduling"
-    description: "Content is ready but publishing is manual. · Strength: Easiest to automate — clear inputs and outputs. · Tradeoff: Lowest impact if curation or writing is still the bottleneck."
-    multiSelect: false
+- "⭐ Recommended: Curation takes too long" (description: "Finding and evaluating links is the slow step. · Strength: Directly targets time-to-publish — automating curation yields the biggest time savings based on current pipeline timings. · Tradeoff: Automated curation risks losing the personal editorial voice that subscribers value.")
+- "Writing the commentary" (description: "Links are ready but writing around them is slow. · Strength: AI-assisted drafting can cut this in half. · Tradeoff: Heavy AI drafting can make the newsletter feel generic — needs careful voice calibration.")
+- "Distribution and scheduling" (description: "Content is ready but publishing is manual. · Strength: Easiest to automate — clear inputs and outputs. · Tradeoff: Lowest impact if curation or writing is still the bottleneck.")
 
 **Note**: Questions focus on **WHAT should happen** (requirements, behavior, outcomes) — NOT **HOW to implement it** (code patterns, specific tools). The `⭐ Recommended` pick is grounded in research and context — the user always has the final say.
