@@ -1,11 +1,8 @@
 # Eval cases
 
-Manual sanity-check cases spanning the language families the registry covers. Each case names PRD priors,
-expected Q0 path, residual answers (if custom), expected `starter_id` family (any of the listed passes),
-expected Socratic moments, and the `bootstrapper_confidence` value Step E should surface.
+Manual sanity-check cases spanning the language families the registry covers. Each case names PRD priors, expected Q0 path, residual answers (if custom), expected `starter_id` family (any of the listed passes), expected Socratic moments, and the `bootstrapper_confidence` value Step E should surface.
 
-These cases are run manually during development and serve as a future hook for `/skill-creator` evals.
-No production code consumes this file — it's a development artifact loaded only on demand.
+These cases are run manually during development and serve as a future hook for `/skill-creator` evals. No production code consumes this file — it's a development artifact loaded only on demand.
 
 ---
 
@@ -27,9 +24,7 @@ expected_socratic_moments:
 expected_bootstrapper_confidence_surfaced: first-class  # 10x-astro-starter is first-class
 ```
 
-Standard path resolves through `recommended_defaults[saas][js] = 10x-astro-starter`. Solo + 4-week timeline
-and JS family → recommended_default + agent-friendly. (T3 stays as a strong alternative; the
-recommendation leads with 10x-astro-starter when both compete.)
+Standard path resolves through `recommended_defaults[saas][js] = 10x-astro-starter`. Solo + 4-week timeline + JS family → recommended_default + agent-friendly. (T3 stays as a strong alternative; the recommendation leads with 10x-astro-starter when both compete.)
 
 ---
 
@@ -52,8 +47,7 @@ expected_socratic_moments:
 expected_bootstrapper_confidence_surfaced: first-class  # FastAPI is first-class
 ```
 
-Standard path resolves through `recommended_defaults[api][python] = fastapi`. The skill must NOT surface JS
-alternatives in the conversation — Step A's language_family partition drops them.
+Standard path resolves through `recommended_defaults[api][python] = fastapi`. The skill must NOT surface JS alternatives in the conversation — Step A's language_family partition drops them.
 
 ---
 
@@ -75,9 +69,7 @@ expected_socratic_moments:
 expected_bootstrapper_confidence_surfaced: first-class  # 10x-astro-starter
 ```
 
-Standard path resolves through `recommended_defaults[web][js] = 10x-astro-starter`. For a true static
-portfolio with no auth/database, Astro alone may be the better pick — the skill should ask one clarifying
-question.
+Standard path resolves through `recommended_defaults[web][js] = 10x-astro-starter`. For a true static portfolio with no auth/database, Astro alone may be the better pick — the skill should ask one clarifying question.
 
 ---
 
@@ -96,14 +88,11 @@ residual_answers:
 q0_expected_path: custom  # forced by request shape
 expected_recommendation_family: [next, nuxt, sveltekit]  # any of these is acceptable
 expected_socratic_moments:
-  - "Q6 framework variant — present 3-5 candidates with one-line fits + bootstrapper_confidence; refuse
-    vacuum comparison"
+  - "Q6 framework variant — present 3-5 candidates with one-line fits + bootstrapper_confidence; refuse vacuum comparison"
 expected_bootstrapper_confidence_surfaced: verified  # whichever is picked, all three are verified or first-class
 ```
 
-Custom path forced by the user's exploration intent. The skill walks Q1–Q3 first (so the candidate pool is
-constrained), then Q6 surfaces React vs Vue vs Svelte starters with project-context-driven fits. Refuses to
-compare in vacuum.
+Custom path forced by the user's exploration intent. The skill walks Q1–Q3 first (so the candidate pool is constrained), then Q6 surfaces React vs Vue vs Svelte starters with project-context-driven fits. Refuses to compare in vacuum.
 
 ---
 
@@ -119,14 +108,11 @@ residual_answers:
 q0_expected_path: custom  # registry has no browser-extension default
 expected_recommendation_family: []  # registry doesn't carry an extension starter today
 expected_socratic_moments:
-  - "registry gap surfaced; user must pick which half this hand-off addresses (extension OR API), or pick
-    custom-path API stack"
+  - "registry gap surfaced; user must pick which half this hand-off addresses (extension OR API), or pick custom-path API stack"
 expected_bootstrapper_confidence_surfaced: best-effort  # if any
 ```
 
-The registry doesn't carry browser-extension starters (Plasmo/WXT). The skill should surface the gap
-honestly, ask the user to scope this hand-off to one component (extension OR API), and let the user re-run
-for the other component. This is a known shape for two-part products.
+The registry doesn't carry browser-extension starters (Plasmo/WXT). The skill should surface the gap honestly, ask the user to scope this hand-off to one component (extension OR API), and let the user re-run for the other component. This is a known shape for two-part products.
 
 ---
 
@@ -168,9 +154,7 @@ expected_bootstrapper_confidence_surfaced: first-class
 expected_q4_lead: self-host  # NOT cloudflare; NOT vercel
 ```
 
-Standard path resolves through `recommended_defaults[api][go] = go`. Critical: Q4 must lead with
-`self-host` (per Go card's `deployment_defaults: [self-host, fly, aws-ecs, google-cloud-run]`), NOT
-Cloudflare. The frame's "Cloudflare default" applies only when the chosen card lists it first.
+Standard path resolves through `recommended_defaults[api][go] = go`. Critical: Q4 must lead with `self-host` (per Go card's `deployment_defaults: [self-host, fly, aws-ecs, google-cloud-run]`), NOT Cloudflare. The frame's "Cloudflare default" applies only when the chosen card lists it first.
 
 ---
 
@@ -210,10 +194,7 @@ expected_socratic_moments:
 expected_bootstrapper_confidence_surfaced: first-class
 ```
 
-Standard path; recommended_defaults[saas][js] = 10x-astro-starter. The avoid: [php] entry means Laravel is
-silently dropped from any candidate list (Step A filter 4). If the user later names Laravel anyway, Step B's
-Socratic challenge fires (Laravel passes the gates, but the user's avoid-list takes precedence — the
-challenge surfaces the conflict, not a quality failure).
+Standard path; recommended_defaults[saas][js] = 10x-astro-starter. The avoid: [php] entry means Laravel is silently dropped from any candidate list (Step A filter 4). If the user later names Laravel anyway, Step B's Socratic challenge fires (Laravel passes the gates, but the user's avoid-list takes precedence — the challenge surfaces the conflict, not a quality failure).
 
 ---
 
@@ -231,8 +212,4 @@ expected_socratic_moments: []
 expected_bootstrapper_confidence_surfaced: first-class  # registry says first-class until promoted
 ```
 
-Verifies Step E surfaces the `bootstrapper_confidence: first-class` value verbatim in conversation:
-"Bootstrapper has this stack registered with a valid CLI but hasn't been battle-tested. Expect
-mostly-smooth scaffolding with occasional manual steps." The user proceeds knowingly. Note the
-`10x-astro-starter` card stays at `first-class` until verified end-to-end through bootstrapper, at which point
-promote to `verified`.
+Verifies Step E surfaces the `bootstrapper_confidence: first-class` value verbatim in conversation: "Bootstrapper has this stack registered with a valid CLI but hasn't been battle-tested. Expect mostly-smooth scaffolding with occasional manual steps." The user proceeds knowingly. Note the `10x-astro-starter` card stays at `first-class` until verified end-to-end through bootstrapper, at which point promote to `verified`.

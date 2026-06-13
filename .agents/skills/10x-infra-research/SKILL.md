@@ -31,7 +31,6 @@ The single deliverable is `context/foundation/infrastructure.md` — the third d
 ## Non-goals
 
 This skill does **not**:
-
 - Build Docker images or write Dockerfiles.
 - Configure CI/CD pipelines.
 - Plan beyond MVP scope (medium-term cost projections are fine; multi-region HA is out of scope).
@@ -79,49 +78,44 @@ Ask the user five Yes / No / Don't know questions. Ask each question one at a ti
 **Question 1**
 
 Ask the user: "Does your app require persistent server-side connections — WebSockets, long-polling, or background worker processes that must stay alive between requests?"
-Options:
-
-- "Yes" (The app needs always-on processes or long-lived connections.)
-- "No" (Request/response only — each request is stateless.)
-- "Don't know" (I'm not sure yet.)
+  Options:
+  - "Yes" (The app needs always-on processes or long-lived connections.)
+  - "No" (Request/response only — each request is stateless.)
+  - "Don't know" (I'm not sure yet.)
 
 **Question 2**
 
 Ask the user: "Is minimizing monthly cost the top priority at MVP stage, or is developer experience and speed of iteration more important?"
-Options:
-
-- "Minimize cost" (I want the cheapest viable option, even if DX is rougher.)
-- "Prioritize DX" (I'll pay a reasonable amount for a smoother development loop.)
-- "Don't know / roughly equal" (No strong preference.)
+  Options:
+  - "Minimize cost" (I want the cheapest viable option, even if DX is rougher.)
+  - "Prioritize DX" (I'll pay a reasonable amount for a smoother development loop.)
+  - "Don't know / roughly equal" (No strong preference.)
 
 **Question 3**
 
 Ask the user: "Do you or your team already have hands-on experience with any specific platform you'd feel comfortable deploying to?"
-Options:
-
-- "Yes — Vercel / Netlify" (Comfortable with JAMstack-style platforms.)
-- "Yes — Cloudflare (Workers / Pages)" (Comfortable with edge-first deployment.)
-- "Yes — Railway / Render / Fly.io" (Comfortable with container-based PaaS.)
-- "Yes — AWS / GCP / Azure" (Comfortable with hyperscaler infrastructure.)
-- "No strong familiarity" (Open to whatever fits best.)
+  Options:
+  - "Yes — Vercel / Netlify" (Comfortable with JAMstack-style platforms.)
+  - "Yes — Cloudflare (Workers / Pages)" (Comfortable with edge-first deployment.)
+  - "Yes — Railway / Render / Fly.io" (Comfortable with container-based PaaS.)
+  - "Yes — AWS / GCP / Azure" (Comfortable with hyperscaler infrastructure.)
+  - "No strong familiarity" (Open to whatever fits best.)
 
 **Question 4**
 
 Ask the user: "Do you expect the app to serve users globally (edge/CDN matters) or mainly from one region?"
-Options:
-
-- "Global — latency across regions matters" (Users will be on different continents.)
-- "Single region is fine" (All users are in one country / region.)
-- "Don't know yet" (Not sure about target geography.)
+  Options:
+  - "Global — latency across regions matters" (Users will be on different continents.)
+  - "Single region is fine" (All users are in one country / region.)
+  - "Don't know yet" (Not sure about target geography.)
 
 **Question 5**
 
 Ask the user: "Will the deployment need co-located managed services — database, object storage, queues — from the same platform, or are external providers fine?"
-Options:
-
-- "Co-location preferred" (I want DB, storage, etc. from the same vendor to keep it simple.)
-- "External providers are fine" (I'll use separate services (e.g., Supabase, Upstash, Cloudflare R2).)
-- "Don't know yet" (Haven't decided on data layer yet.)
+  Options:
+  - "Co-location preferred" (I want DB, storage, etc. from the same vendor to keep it simple.)
+  - "External providers are fine" (I'll use separate services (e.g., Supabase, Upstash, Cloudflare R2).)
+  - "Don't know yet" (Haven't decided on data layer yet.)
 
 Store all five answers as research constraints before moving to Step 2.
 
@@ -131,14 +125,14 @@ Use subagents to research platforms in parallel. The goal is to gather enough si
 
 **Platform candidate pool** (research these, then score and narrow):
 
-| Platform                   | Primary use case                                         |
-| -------------------------- | -------------------------------------------------------- |
-| Cloudflare Workers + Pages | Edge-first, serverless JS/TS, global CDN                 |
-| Vercel                     | Frontend + serverless functions, Next.js-native          |
-| Netlify                    | Frontend + serverless, JAMstack, form/auth primitives    |
-| Fly.io                     | Container-based PaaS, persistent processes, multi-region |
-| Railway                    | Full-stack PaaS, databases co-located, fast DX           |
-| Render                     | Container/static hosting, free tier, cron jobs           |
+| Platform | Primary use case |
+|---|---|
+| Cloudflare Workers + Pages | Edge-first, serverless JS/TS, global CDN |
+| Vercel | Frontend + serverless functions, Next.js-native |
+| Netlify | Frontend + serverless, JAMstack, form/auth primitives |
+| Fly.io | Container-based PaaS, persistent processes, multi-region |
+| Railway | Full-stack PaaS, databases co-located, fast DX |
+| Render | Container/static hosting, free tier, cron jobs |
 
 For each platform, spawn a subagent with a focused research prompt. Run all six in parallel:
 
@@ -170,23 +164,21 @@ After all subagents complete, synthesize their findings into a scoring matrix.
 Score each researched platform against the five criteria from `references/agent-friendly-criteria.md`. Apply hard filters first:
 
 **Hard filters** (a platform that fails these is dropped from shortlisting):
-
 - If interview Q1 = "Yes (persistent connections required)" → drop platforms that cannot run persistent processes (Netlify, Vercel serverless-only).
 - If tech stack uses a runtime not supported by a platform → drop that platform.
 
 **Scoring** (Pass / Partial / Fail per criterion):
 
-| Platform   | CLI-first | Managed/Serverless | Agent-readable docs | Stable deploy API | MCP / Integration | Total |
-| ---------- | --------- | ------------------ | ------------------- | ----------------- | ----------------- | ----- |
-| Cloudflare |           |                    |                     |                   |                   |       |
-| Vercel     |           |                    |                     |                   |                   |       |
-| Netlify    |           |                    |                     |                   |                   |       |
-| Fly.io     |           |                    |                     |                   |                   |       |
-| Railway    |           |                    |                     |                   |                   |       |
-| Render     |           |                    |                     |                   |                   |       |
+| Platform | CLI-first | Managed/Serverless | Agent-readable docs | Stable deploy API | MCP / Integration | Total |
+|---|---|---|---|---|---|---|
+| Cloudflare | | | | | | |
+| Vercel | | | | | | |
+| Netlify | | | | | | |
+| Fly.io | | | | | | |
+| Railway | | | | | | |
+| Render | | | | | | |
 
 Soft-weight the criteria by interview answers:
-
 - Q2 "minimize cost" → penalize platforms with expensive base tiers.
 - Q3 "existing familiarity" → break ties in favor of the familiar platform.
 - Q4 "global reach" → prefer edge-native platforms.
@@ -230,11 +222,10 @@ Mentally apply this lens and surface 3-5 things the user may not be aware of:
 After all three cross-checks, present the findings to the user and ask:
 
 Ask the user: "The anti-bias cross-check surfaced some risks for <Platform A>. How would you like to proceed?"
-Options:
-
-- "Proceed with <Platform A> — risks noted" (The risks are manageable. Include them in the output's risk register.)
-- "Swap to <Platform B> instead" (The risks are significant enough to prefer the second option.)
-- "Swap to <Platform C> instead" (The risks are significant enough to prefer the third option.)
+  Options:
+  - "Proceed with <Platform A> — risks noted" (The risks are manageable. Include them in the output's risk register.)
+  - "Swap to <Platform B> instead" (The risks are significant enough to prefer the second option.)
+  - "Swap to <Platform C> instead" (The risks are significant enough to prefer the third option.)
 
 Apply the user's choice. If they swap to B or C, run the three cross-checks again for the new top pick and present results (no need to ask again — record it and proceed).
 
@@ -245,11 +236,10 @@ Check for collision by attempting to read `context/foundation/infrastructure.md`
 If the file exists, ask:
 
 Ask the user: "context/foundation/infrastructure.md already exists. How would you like to proceed?"
-Options:
-
-- "Overwrite (Recommended)" (Replace the existing file. The prior version is lost unless committed.)
-- "Save as infrastructure-v2.md" (Preserve history. New file lands at the next available version slot.)
-- "Abort" (Exit without writing. The recommendation is preserved in chat only.)
+  Options:
+  - "Overwrite (Recommended)" (Replace the existing file. The prior version is lost unless committed.)
+  - "Save as infrastructure-v2.md" (Preserve history. New file lands at the next available version slot.)
+  - "Abort" (Exit without writing. The recommendation is preserved in chat only.)
 
 Build the output file:
 
@@ -316,11 +306,11 @@ How the chosen platform actually operates day to day. One concrete answer per li
 
 ## Risk Register
 
-For each identified risk: name, the cross-check lens that surfaced it, likelihood, impact, and a concrete mitigation step. Tying every risk back to a lens makes the register auditable — a future reader can see _why_ each item is on the list.
+For each identified risk: name, the cross-check lens that surfaced it, likelihood, impact, and a concrete mitigation step. Tying every risk back to a lens makes the register auditable — a future reader can see *why* each item is on the list.
 
-| Risk   | Source                                                              | Likelihood | Impact  | Mitigation      |
-| ------ | ------------------------------------------------------------------- | ---------- | ------- | --------------- |
-| <risk> | Devil's advocate / Pre-mortem / Unknown unknowns / Research finding | <L/M/H>    | <L/M/H> | <concrete step> |
+| Risk | Source | Likelihood | Impact | Mitigation |
+|---|---|---|---|---|
+| <risk> | Devil's advocate / Pre-mortem / Unknown unknowns / Research finding | <L/M/H> | <L/M/H> | <concrete step> |
 
 ## Getting Started
 
@@ -329,7 +319,6 @@ For each identified risk: name, the cross-check lens that surfaced it, likelihoo
 ## Out of Scope
 
 The following were not evaluated in this research:
-
 - Docker image configuration
 - CI/CD pipeline setup
 - Production-scale architecture (multi-region, HA, DR)
