@@ -552,20 +552,20 @@ cancellation limit redundant client work during rapid multi-select changes.
 
 #### Automated
 
-- [x] 3.1 Final history contract suite passes
-- [x] 3.2 Existing focused TypeScript suites pass
-- [x] 3.3 Full database and concurrency gates remain green
-- [x] 3.4 Astro types synchronize successfully
-- [x] 3.5 Repository lint passes
-- [x] 3.6 Production Cloudflare Worker build succeeds
+- [x] 3.1 Final history contract suite passes — de3d899
+- [x] 3.2 Existing focused TypeScript suites pass — de3d899
+- [x] 3.3 Full database and concurrency gates remain green — de3d899
+- [x] 3.4 Astro types synchronize successfully — de3d899
+- [x] 3.5 Repository lint passes — de3d899
+- [x] 3.6 Production Cloudflare Worker build succeeds — de3d899
 
 #### Manual
 
-- [x] 3.7 Date presets and inclusive local ranges return correct history
-- [x] 3.8 Muscle multi-select updates without confirmation or document reload
-- [x] 3.9 Canonical URLs restore filters and results
-- [x] 3.11 Cursor pagination and infinite scrolling append stable duplicate-free results
-- [x] 3.12 Inline details show complete immutable prescriptions
-- [x] 3.13 Empty, loading, and failure states preserve context without visible retry controls
-- [x] 3.14 Responsive, keyboard, screen-reader, focus, and overflow behavior is correct
-- [x] 3.15 Request lifecycle cleanup prevents late updates after navigation
+- [x] 3.7 Date presets and inclusive local ranges return correct history — de3d899
+- [x] 3.8 Muscle multi-select updates without confirmation or document reload — de3d899
+- [x] 3.9 Canonical URLs restore filters and results — de3d899
+- [x] 3.11 Cursor pagination and infinite scrolling append stable duplicate-free results — de3d899
+- [x] 3.12 Inline details show complete immutable prescriptions — de3d899
+- [x] 3.13 Empty, loading, and failure states preserve context without visible retry controls — de3d899
+- [x] 3.14 Responsive, keyboard, screen-reader, focus, and overflow behavior is correct — de3d899
+- [x] 3.15 Request lifecycle cleanup prevents late updates after navigation — de3d899
