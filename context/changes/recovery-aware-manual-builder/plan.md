@@ -367,14 +367,14 @@ state.
 
 #### Automated
 
-- [x] 3.1 Document the recovery-aware catalogue contract
-- [x] 3.2 Pass the focused recovery/manual Node test command
-- [x] 3.3 Pass the full local database suite
-- [x] 3.4 Pass lint
-- [x] 3.5 Pass the production build
+- [x] 3.1 Document the recovery-aware catalogue contract — 82c2e98
+- [x] 3.2 Pass the focused recovery/manual Node test command — 82c2e98
+- [x] 3.3 Pass the full local database suite — 82c2e98
+- [x] 3.4 Pass lint — 82c2e98
+- [x] 3.5 Pass the production build — 82c2e98
 
 #### Manual
 
-- [x] 3.6 Verify expiry transitions for a completed primary-muscle workout
-- [x] 3.7 Verify visible secondary-only context does not move an exercise into the recovering group
-- [x] 3.8 Verify saving a draft containing a recovering exercise preserves the normal planned-workout outcome
+- [x] 3.6 Verify expiry transitions for a completed primary-muscle workout — 82c2e98
+- [x] 3.7 Verify visible secondary-only context does not move an exercise into the recovering group — 82c2e98
+- [x] 3.8 Verify saving a draft containing a recovering exercise preserves the normal planned-workout outcome — 82c2e98
